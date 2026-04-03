@@ -88,8 +88,21 @@ export default function SettingsView() {
     const toggleAiStatus = useBibleStore(state => state.toggleAiStatus);
 
     const [notifSettings, setNotifSettings] = useState<NotificationSettings>(() => loadNotificationSettings());
+    const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+    const [canInstall, setCanInstall] = useState(false);
 
-    useEffect(() => setMounted(true), []);
+    useEffect(() => {
+        setMounted(true);
+        
+        const handleBeforeInstallPrompt = (e: Event) => {
+            e.preventDefault();
+            setDeferredPrompt(e);
+            setCanInstall(true);
+        };
+
+        window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+        return () => window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    }, []);
 
     // Stats from localStorage
     const stats = useMemo(() => {
@@ -198,6 +211,14 @@ export default function SettingsView() {
         await rescheduleFromSettings();
     };
 
+    const handleInstallClick = async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') setCanInstall(false);
+        setDeferredPrompt(null);
+    };
+
     if (!mounted) return null;
 
     return (
@@ -299,6 +320,21 @@ export default function SettingsView() {
 
             {/* === Notifications === */}
             <Section title="알림 및 습관" icon={<Bell size={14} />}>
+                {canInstall && (
+                    <SettingRow
+                        icon={Download}
+                        iconColor="text-indigo-500"
+                        iconBg="bg-indigo-500/10"
+                        label="성경 365 앱 설치"
+                        description="홈 화면에 추가하여 앱처럼 사용하세요"
+                        onClick={handleInstallClick}
+                        action={
+                            <span className="px-3 py-1 bg-indigo-500 text-white text-[10px] font-bold rounded-full shadow-sm shadow-indigo-500/20">
+                                설치하기
+                            </span>
+                        }
+                    />
+                )}
                 <SettingRow
                     icon={Bell}
                     iconColor="text-orange-500"

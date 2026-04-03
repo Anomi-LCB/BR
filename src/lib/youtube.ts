@@ -9,7 +9,8 @@ export interface YoutubeVideo {
     duration?: string; // ISO 8601 format (e.g., PT15M30S)
 }
 
-const PLAYLIST_ID = 'PLVcVykBcFZTR4Q6cvmybjPgCklZlv-Ghj';
+const OT_PLAYLIST_ID = 'PLVcVykBcFZTRw1ZxIhIQ9uuAU6lU_PvDB';
+const NT_PLAYLIST_ID = 'PLVcVykBcFZTSM0ueQRAzrlRw42mmaUL6U';
 const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
 const CACHE_KEY = 'youtube_bible_reading_cache';
 const CACHE_EXPIRY = 7 * 24 * 60 * 60 * 1000; // 7 days
@@ -57,58 +58,75 @@ export async function fetchYoutubePlaylist(): Promise<YoutubeVideo[]> {
         }
     }
 
-    // 2. API 호출
-    const allVideos: YoutubeVideo[] = [];
-    let nextPageToken = '';
+    // 2. API 호출 로직 (재생목록별 처리)
+    const fetchList = async (playlistId: string): Promise<YoutubeVideo[]> => {
+        const videos: YoutubeVideo[] = [];
+        let nextPageToken = '';
+        
+        try {
+            do {
+                const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${API_KEY}${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
+                const response = await fetch(playlistUrl);
+                const data = await response.json();
+
+                if (data.error) throw new Error(data.error.message);
+                if (!data.items) break;
+
+                const videoIds = data.items.map((item: any) => item.snippet.resourceId.videoId).join(',');
+                const videoDetailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${API_KEY}`;
+                const detailsResponse = await fetch(videoDetailsUrl);
+                const detailsData = await detailsResponse.json();
+                const durationMap = new Map(detailsData.items.map((v: any) => [v.id, v.contentDetails.duration]));
+
+                const items = data.items.map((item: any, index: number) => {
+                    const title = item.snippet.title;
+                    const match = title.match(/(\d+)(회차|일차|일)/);
+                    const dayNumber = match ? parseInt(match[1]) : (videos.length + index + 1);
+                    const videoId = item.snippet.resourceId.videoId;
+
+                    return {
+                        videoId: videoId,
+                        title: title,
+                        dayNumber: dayNumber,
+                        thumbnailUrl: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+                        publishedAt: item.snippet.publishedAt,
+                        duration: durationMap.get(videoId) as string,
+                    };
+                });
+
+                videos.push(...items);
+                nextPageToken = data.nextPageToken;
+            } while (nextPageToken);
+            return videos;
+        } catch (error) {
+            console.error(`Failed to fetch playlist ${playlistId}:`, error);
+            return [];
+        }
+    };
 
     try {
-        do {
-            const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${PLAYLIST_ID}&key=${API_KEY}${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
-            const response = await fetch(playlistUrl);
-            const data = await response.json();
+        // 구약과 신약 플레이리스트 병렬 로딩
+        const [otVideos, ntVideos] = await Promise.all([
+            fetchList(OT_PLAYLIST_ID),
+            fetchList(NT_PLAYLIST_ID)
+        ]);
 
-            if (data.error) {
-                throw new Error(data.error.message);
-            }
+        // 데이터 통합 및 중복 제거 (videoId 기준)
+        const combined = [...otVideos, ...ntVideos];
+        const uniqueVideos = Array.from(new Map(combined.map(v => [v.videoId, v])).values());
+        
+        // 날짜순으로 정렬 (dayNumber 기준)
+        uniqueVideos.sort((a, b) => a.dayNumber - b.dayNumber);
 
-            const videoIds = data.items.map((item: any) => item.snippet.resourceId.videoId).join(',');
-
-            // 영상 상세 정보(길이 포함) 가져오기
-            const videoDetailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${API_KEY}`;
-            const detailsResponse = await fetch(videoDetailsUrl);
-            const detailsData = await detailsResponse.json();
-            const durationMap = new Map(detailsData.items.map((v: any) => [v.id, v.contentDetails.duration]));
-
-            const items = data.items.map((item: any, index: number) => {
-                const title = item.snippet.title;
-                // 'X회차' 또는 'X일차' 또는 'X일' 형식을 모두 지원
-                const match = title.match(/(\d+)(회차|일차|일)/);
-                const dayNumber = match ? parseInt(match[1]) : (allVideos.length + index + 1);
-                const videoId = item.snippet.resourceId.videoId;
-
-                return {
-                    videoId: videoId,
-                    title: title,
-                    dayNumber: dayNumber,
-                    thumbnailUrl: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
-                    publishedAt: item.snippet.publishedAt,
-                    duration: durationMap.get(videoId) as string,
-                };
-            });
-
-            allVideos.push(...items);
-            nextPageToken = data.nextPageToken;
-        } while (nextPageToken);
-
-        // 3. 캐시 저장 (데이터가 있을 때만)
-        if (allVideos.length > 0) {
+        // 3. 캐시 저장
+        if (uniqueVideos.length > 0) {
             localStorage.setItem(CACHE_KEY, JSON.stringify({
-                videos: allVideos,
+                videos: uniqueVideos,
                 timestamp: Date.now()
             }));
         }
 
-        return allVideos;
+        return uniqueVideos;
     } catch (error) {
         console.error('Failed to fetch YouTube playlist:', error);
         return [];
@@ -127,24 +145,13 @@ export function getVideoForDay(videos: YoutubeVideo[], dayNumber: number): Youtu
     // 1. 정확한 dayNumber 매칭 시도
     let video = videos.find(v => v.dayNumber === targetDay);
 
-    // 2. 매칭되는 영상이 없을 경우의 예외 처리 (Day 246 등)
+    // 2. 매칭되는 영상이 없을 경우 근접한 날짜의 영상이라도 찾음
     if (!video) {
-        if (targetDay === 246) {
-            console.log("Day 246 has no assigned video.");
-            return null;
-        }
+        // 특정 누락된 날짜(Day 246 등)에 대한 처리
+        if (targetDay === 246) return null;
         
-        // 3. Fallback: 인덱스 기반으로 시도 (재생목록 순서가 맞을 경우)
-        // 단, 246화 이후의 밀림 현상 반영
-        if (targetDay <= 245) {
-            video = videos[targetDay - 1];
-        } else if (targetDay >= 247 && targetDay <= 354) {
-            video = videos[targetDay - 2];
-        } else if (targetDay === 355) {
-            video = videos[363] || videos[videos.length - 1];
-        } else {
-            video = videos[targetDay - 3];
-        }
+        // 가장 가까운 이전 날짜 영상을 찾거나 인덱스로 시도
+        video = videos.find(v => v.dayNumber < targetDay);
     }
 
     return video || null;
