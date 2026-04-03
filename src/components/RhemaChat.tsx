@@ -32,8 +32,8 @@ export default function RhemaChat({ onClose }: RhemaChatProps) {
         body: { userId },
         onFinish: (message: any) => {
             // Simple heuristic to detect if AI generated a liturgy
-            if (message.content.includes("湲곕룄臾?")) {
-                const parts = message.content.split("湲곕룄臾?");
+            if (message.content.includes("기도문")) {
+                const parts = message.content.split("기도문");
                 if (parts.length > 1) {
                     setGeneratedLiturgy(parts[1].trim());
                 }
@@ -72,7 +72,7 @@ export default function RhemaChat({ onClose }: RhemaChatProps) {
                         <h3 className="font-bold text-lg text-foreground bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-pink-500">
                             Rhema AI
                         </h3>
-                        <p className="text-xs text-muted-foreground">?뱀떊???곸쟻 ?숇컲??/p>
+                        <p className="text-xs text-muted-foreground">당신의 영적 동반자</p>
                     </div>
                 </div>
                 <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full hover:bg-white/10">
@@ -87,12 +87,12 @@ export default function RhemaChat({ onClose }: RhemaChatProps) {
                         <Sparkles className="w-12 h-12 text-muted-foreground/50" />
                         <div className="space-y-2">
                             <p className="text-sm font-medium text-muted-foreground">
-                                ?ㅻ뒛 臾듭긽???댁슜?대굹 <br />
-                                湲곕룄媛� ?꾩슂???쒕ぉ???섎늻?대낫?몄슂.
+                                오늘 묵상한 내용이나 <br />
+                                기도가 필요한 제목을 나누어보세요.
                             </p>
                         </div>
                         <div className="flex flex-wrap gap-2 justify-center max-w-xs">
-                            {["?ㅻ뒛 留먯????댄빐媛� ????, "湲곕룄 遺�?곹빐", "遺덉븞??留덉쓬???ㅼ뼱"].map((suggestion) => (
+                            {["오늘 말씀이 이해가 안돼", "기도 부탁해", "불안한 마음이 들어"].map((suggestion) => (
                                 <button
                                     key={suggestion}
                                     onClick={() => handleInputChange({ target: { value: suggestion } } as any)}
@@ -188,7 +188,7 @@ export default function RhemaChat({ onClose }: RhemaChatProps) {
                     <Input
                         value={input}
                         onChange={handleInputChange}
-                        placeholder={isListening ? "留먯???二쇱꽭??.." : "硫붿떆吏�瑜??낅젰?섏꽭??.."}
+                        placeholder={isListening ? "말씀해 세요..." : "메시지를 입력하세요..."}
                         className="flex-1 bg-white/5 border-white/10 focus-visible:ring-indigo-500 rounded-full pl-4 pr-12 text-sm h-11 backdrop-blur-sm"
                         disabled={isLoading}
                     />

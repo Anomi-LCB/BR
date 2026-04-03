@@ -80,9 +80,9 @@ export function checkNewAchievements(
 
         let isEarned = false;
         if (badge.criteria.type === "streak") {
-            isEarned = currentStreak >= badge.criteria.value;
+            isEarned = currentStreak >= (badge.criteria as any).value;
         } else if (badge.criteria.type === "total_days") {
-            isEarned = totalDays >= badge.criteria.value;
+            isEarned = totalDays >= (badge.criteria as any).value;
         }
 
         if (isEarned) {

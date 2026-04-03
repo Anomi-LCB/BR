@@ -34,9 +34,9 @@ export default function RhemaInsight({ onClose }: RhemaInsightProps) {
 
                 // Fallback parsing if structure fails
                 setInsight({
-                    theme: themeMatch ? themeMatch[1] : "?ㅻ뒛???�??,
+                    theme: themeMatch ? themeMatch[1] : "오늘의 은혜",
                     context: contextMatch ? contextMatch[1].split('PRAYER:')[0].trim() : content.slice(0, 100) + "...",
-                    prayer: prayerMatch ? prayerMatch[1].trim() : "二쇰떂, ?ㅻ뒛??留먯? ?덉뿉???닿쾶 ?섏냼??"
+                    prayer: prayerMatch ? prayerMatch[1].trim() : "주님, 오늘 말씀 안에 머물게 하소서."
                 });
                 setStep('result');
             } catch (e) {
@@ -71,7 +71,7 @@ export default function RhemaInsight({ onClose }: RhemaInsightProps) {
                         <h3 className="font-serif font-bold text-xl text-foreground">
                             Rhema Insight
                         </h3>
-                        <p className="text-xs text-muted-foreground font-medium">?ㅻ뒛??留먯? 源딆씠 蹂닿린</p>
+                        <p className="text-xs text-muted-foreground font-medium">오늘의 말씀 깊이 보기</p>
                     </div>
                 </div>
                 <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full hover:bg-white/10">
@@ -92,12 +92,12 @@ export default function RhemaInsight({ onClose }: RhemaInsightProps) {
                         >
                             <div className="space-y-4">
                                 <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-                                    留먯???源딆씠瑜??뷀븯?몄슂
+                                    말씀의 깊이를 더하세요
                                 </h2>
                                 <p className="text-muted-foreground leading-relaxed">
-                                    ?ㅻ뒛 ?쎌? 留먯?????궗??諛곌꼍怨?br />
-                                    ?듭떖 二쇱젣, 洹몃━怨??뱀떊???꾪븳 湲곕룄瑜?br />
-                                    AI媛� 臾듭긽?섏뿬 ?쒕┰?덈떎.
+                                    오늘 읽은 말씀의 역사적 배경과 <br />
+                                    핵심 주제, 그리고 당신을 위한 기도를 <br />
+                                    AI가 묵상하여 드립니다.
                                 </p>
                             </div>
 
@@ -107,7 +107,7 @@ export default function RhemaInsight({ onClose }: RhemaInsightProps) {
                                 className="w-full rounded-2xl h-14 text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-xl shadow-indigo-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
                             >
                                 <Sparkles className="mr-2 w-5 h-5 animate-pulse" />
-                                ?몄궗?댄듃 ?닿린
+                                인사이트 열기
                             </Button>
                         </motion.div>
                     )}
@@ -127,7 +127,7 @@ export default function RhemaInsight({ onClose }: RhemaInsightProps) {
                                 </div>
                             </div>
                             <p className="text-sm font-medium text-muted-foreground animate-pulse">
-                                留먯???臾듭긽?섍퀬 ?덉뒿?덈떎...
+                                말씀을 묵상하고 있습니다...
                             </p>
                         </motion.div>
                     )}
@@ -174,7 +174,7 @@ export default function RhemaInsight({ onClose }: RhemaInsightProps) {
 
                             <div className="pt-4 mt-auto">
                                 <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 font-bold" onClick={onClose}>
-                                    ?꾨찘, 媛먯궗?⑸땲??
+                                    아멘, 감사합니다.
                                 </Button>
                             </div>
                         </motion.div>

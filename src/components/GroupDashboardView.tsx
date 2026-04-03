@@ -270,7 +270,7 @@ export default function GroupDashboardView({ user, streak, progress, onTabChange
 
 
 
-    const myName = (effectiveUser as any)?.user_metadata?.first_name || cachedAnon || '??;
+    const myName = (effectiveUser as any)?.user_metadata?.first_name || cachedAnon || '익명';
 
 
 
@@ -314,7 +314,7 @@ export default function GroupDashboardView({ user, streak, progress, onTabChange
 
 
 
-        await sendMessage(`?럦 [${newGroupName || '?덈줈??肄붿씠?몃땲??}] 洹몃９???쒖옉?섏뿀?듬땲??\n\n?대쾲 ?뚮쭏: ${newGroupTheme}\n?쒕줈瑜?寃⑸젮?섎ŉ 留먯???臾듭긽?대낫?몄슂.`, 'system', effectiveUser);
+        await sendMessage(`🎉 [${newGroupName || '새로운 코이노니아'}] 그룹이 시작되었습니다!\n\n이번 테마: ${newGroupTheme}\n서로를 격려하며 말씀을 묵상해보세요.`, 'system', effectiveUser);
 
 
 
@@ -324,9 +324,9 @@ export default function GroupDashboardView({ user, streak, progress, onTabChange
 
 
 
-        const shareText = `[?깃꼍 365]\n'${newGroupName || '?덈줈??肄붿씠?몃땲??}' 洹몃９??硫ㅻ쾭濡?珥덈??⑸땲??\n\n珥덈? 肄붾뱶: ${newCode}\n?깃꼍 ?쎄퀬 ?섎늻硫??④퍡 ??쒕컺?꾩슂!`;
+        const shareText = `[성경 365]\n'${newGroupName || '새로운 코이노니아'}' 그룹의 멤버로 초대합니다.\n\n초대 코드: ${newCode}\n성경 읽고 나누며 함께 은혜받아요!`;
 
-        shareContent("肄붿씠?몃땲??珥덈?", shareText);
+        shareContent("코이노니아 초대", shareText);
 
     };
 
@@ -502,7 +502,7 @@ export default function GroupDashboardView({ user, streak, progress, onTabChange
 
                                                 className="w-full h-12 px-4 rounded-xl bg-muted/50 border border-border/50 text-sm font-bold focus:border-primary/50 outline-none transition-colors"
 
-                                                placeholder="?? ?덈떞 泥?뀈遺 1議?
+                                                placeholder="예: 예담 청년부 1조"
 
                                                 value={newGroupName}
 
@@ -821,21 +821,13 @@ export default function GroupDashboardView({ user, streak, progress, onTabChange
                                             <p className="text-sm font-bold truncate">{m.name}</p>
 
                                             <p className="text-[10px] text-muted-foreground">
-
                                                 {m.isOnline ? (
-
-                                                    <span className="text-green-500 font-bold">???묒냽 以?/span>
-
+                                                    <span className="text-green-500 font-bold">🟢 접속 중</span>
                                                 ) : (
-
-                                                    '?ㅽ봽?쇱씤'
-
+                                                    '오프라인'
                                                 )}
-
-                                                {m.status === 'reading' && ' 쨌 留먯? 臾듭긽以?}
-
-                                                {m.status === 'done' && ' 쨌 ?꾨룆 ?꾨즺'}
-
+                                                {m.status === 'reading' && ' · 말씀 묵상중'}
+                                                {m.status === 'done' && ' · 통독 완료'}
                                             </p>
 
                                         </div>

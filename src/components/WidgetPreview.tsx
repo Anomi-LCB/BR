@@ -73,7 +73,7 @@ export default function WidgetPreview({ plan, progress, streak, type, size }: Wi
                         <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest leading-none">Streak</p>
                         <div className="flex items-center gap-1">
                             <Flame size={14} className="text-orange-500 fill-orange-500" />
-                            <span className="text-lg font-black">{streak}??/span>
+                            <span className="text-lg font-black">{streak}일</span>
                         </div>
                     </div>
                 </div>
@@ -83,8 +83,8 @@ export default function WidgetPreview({ plan, progress, streak, type, size }: Wi
                     <div className="flex justify-between items-start">
                         <div className="space-y-0.5">
                             <p className="text-[10px] font-bold text-primary uppercase tracking-tighter">Coming Up Next</p>
-                            <h4 className="text-sm font-black leading-tight">{plan?.title || "?깃꼍 ?쎄린 ?쒖옉"}</h4>
-                            <p className="text-[10px] text-muted-foreground font-medium">{plan?.verses[0] || "李쎌꽭湲?1??}</p>
+                            <h4 className="text-sm font-black leading-tight">{plan?.title || "성경 읽기 시작"}</h4>
+                            <p className="text-[10px] text-muted-foreground font-medium">{plan?.verses[0] || "창세기 1장"}</p>
                         </div>
                         <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20">
                             <Play size={14} fill="white" />

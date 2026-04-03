@@ -49,9 +49,9 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
     const formatKoreanText = (text: string) => {
         if (!text) return text;
         // ?대?/議곗궗 ???꾩뼱?곌린 媛뺤젣 ?쎌엯 (媛꾨떒 ?대━?ㅽ떛)
-        let formatted = text.replace(/(?듬땲???⑸땲???낅땲???덉뒿?덈떎|??/g, '$1 ') // Wait wait, regex error fixing
-            .replace(/(?듬땲???⑸땲???낅땲???덉뒿?덈떎|?댁슂|?꾩슂|?곗슂|?ㅼ슂|?�|????媛�|??瑜????먭쾶|?먯꽌|濡??쇰줈)(?![\s.,!?])/g, '$1 ');
+        let formatted = text.replace(/(습니다|합니다|입니다|했습니다|은|는|이|가|을|를|에게|에서|로|으로)(?![\s.,!?])/g, '$1 ');
         return formatted.replace(/\s+/g, ' ').trim();
+
     };
 
     // Initialize Web Speech API
@@ -284,7 +284,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                                     >
                                         <Tag size={12} className={cn("shrink-0", selectedRhema ? "text-amber-500" : "")} />
                                         <span className="truncate">
-                                            {selectedRhema ? '留먯? 蹂�寃? : '留먯? ?쒓렇?섍린'}
+                                            {selectedRhema ? '말씀 변경' : '말씀 태그하기'}
                                         </span>
                                     </button>
                                 )}

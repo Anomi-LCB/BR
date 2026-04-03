@@ -57,10 +57,10 @@ export default function ReadingHeatmap({ progress, allPlans, currentDate }: Read
             const firstDayOfWeek = week[0].date;
             const currentMonth = firstDayOfWeek.getMonth();
             if (currentMonth !== lastMonth) {
-                // Fix for the first label showing 12??
-                let labelText = format(firstDayOfWeek, "M??);
-                if (labels.length === 0 && labelText === "12??) {
-                    labelText = "1??;
+                // Fix for the first label showing 12월
+                let labelText = format(firstDayOfWeek, "M월");
+                if (labels.length === 0 && labelText === "12월") {
+                    labelText = "1월";
                 }
                 labels.push({ month: labelText, startIndex: i });
                 lastMonth = currentMonth;
@@ -125,7 +125,7 @@ export default function ReadingHeatmap({ progress, allPlans, currentDate }: Read
                                     left: `${label.startIndex * 12.5 + 28}px`,
                                     // Fix for Dec/Jan overlap: Hide January if it's too close to end (or handled by logic)
                                     // But actually, the issue is usually Dec overlapping Jan of next year or similar.
-                                    display: (label.month === '1?? && i > 0) ? 'none' : 'block' // Simple fix: Hide 2nd Jan if it appears
+                                    display: (label.month === '1월' && i > 0) ? 'none' : 'block' // Simple fix: Hide 2nd Jan if it appears
                                 }}
                             >
                                 {label.month}
@@ -136,13 +136,13 @@ export default function ReadingHeatmap({ progress, allPlans, currentDate }: Read
                     <div className="flex gap-[6px]">
                         {/* Day Labels */}
                         <div className="flex flex-col justify-between py-[2px] w-6 text-[9px] text-muted-foreground font-bold leading-none select-none">
-                            <span>??/span>
-                            <span>??/span>
-                            <span>??/span>
-                            <span>??/span>
-                            <span>紐?/span>
-                            <span>湲?/span>
-                            <span>??/span>
+                            <span>일</span>
+                            <span>월</span>
+                            <span>화</span>
+                            <span>수</span>
+                            <span>목</span>
+                            <span>금</span>
+                            <span>토</span>
                         </div>
 
                         {/* The Grid */}

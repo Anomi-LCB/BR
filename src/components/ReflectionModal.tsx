@@ -95,7 +95,7 @@ export default function ReflectionModal({ planReferences, onComplete, onClose }:
                         className="w-full flex flex-row items-center justify-center gap-1.5 px-3 py-3 rounded-xl bg-secondary text-secondary-foreground text-sm font-bold transition-all hover:opacity-80 active:scale-95 shadow-sm border border-border/40"
                     >
                         <span className={selectedRhema ? "text-primary" : ""}>?뱷</span>
-                        {selectedRhema ? '留먯? 蹂�寃? : '留먯??쒓렇'}
+                        {selectedRhema ? '말씀 변경' : '말씀 태그'}
                     </button>
 
                     {selectedRhema && (
