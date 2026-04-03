@@ -10,6 +10,7 @@ import {
 import { useTheme } from "next-themes";
 import { SmartCard } from "@/components/ui/smart-card";
 import { cn } from "@/lib/utils";
+import { useBibleStore } from "@/store/useBibleStore";
 
 // --- Toggle Switch ---
 function ToggleSwitch({ checked, onCheckedChange }: { checked: boolean; onCheckedChange: (c: boolean) => void }) {
@@ -76,6 +77,9 @@ export default function SettingsView() {
     const [autoBackup, setAutoBackup] = useState(() =>
         typeof window !== 'undefined' ? localStorage.getItem('bible_auto_backup') !== 'false' : true
     );
+    
+    const isAiEnabled = useBibleStore(state => state.isAiEnabled);
+    const toggleAiStatus = useBibleStore(state => state.toggleAiStatus);
 
     useEffect(() => setMounted(true), []);
 
@@ -257,6 +261,16 @@ export default function SettingsView() {
                     description="매일 새로운 격려의 말씀을 표시합니다"
                     action={
                         <ToggleSwitch checked={dailyVerse} onCheckedChange={handleDailyVerseChange} />
+                    }
+                />
+                <SettingRow
+                    icon={Sparkles}
+                    iconColor="text-amber-500"
+                    iconBg="bg-amber-500/10"
+                    label="AI 고도화 기능"
+                    description="AI 페르소나 '레마'의 통찰과 가이드를 활성화합니다"
+                    action={
+                        <ToggleSwitch checked={isAiEnabled} onCheckedChange={(val) => toggleAiStatus(val)} />
                     }
                 />
             </Section>

@@ -8,22 +8,30 @@ import { Youtube } from "lucide-react";
 
 interface HeaderIslandProps {
     title?: string;
+    subtitle?: string;
     onLogoClick?: () => void;
 }
 
-export default function HeaderIsland({ title = "성경 365", onLogoClick }: HeaderIslandProps) {
+export default function HeaderIsland({ title = "성경 365", subtitle, onLogoClick }: HeaderIslandProps) {
     return (
         <header className={cn(
             "fixed top-0 left-0 right-0 z-40 px-6 py-4 flex justify-between items-center pointer-events-none"
         )}>
             {/* Left: Static Title Area */}
             <div className="flex flex-col pointer-events-auto">
-                <h1
-                    className="font-display font-bold text-foreground text-4xl leading-tight cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={onLogoClick}
-                >
-                    {title}
-                </h1>
+                <div className="flex items-center gap-2">
+                    <h1
+                        className="font-serif font-black text-foreground text-2xl tracking-tighter leading-none cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={onLogoClick}
+                    >
+                        {title}
+                    </h1>
+                </div>
+                {subtitle && (
+                    <p className="text-xs font-bold text-muted-foreground mt-1 ml-1 animate-in fade-in slide-in-from-left-2 duration-700">
+                        {subtitle}
+                    </p>
+                )}
             </div>
 
             {/* Right: Controls */}

@@ -1,55 +1,40 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { BookOpen, Calendar, Settings, Home, Flame } from "lucide-react";
+import { BookOpen, Calendar, Settings, Home, Flame, Search, Music, BarChart2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Tab = "home" | "bible" | "streak" | "calendar" | "menu";
+type Tab = "home" | "search" | "hymns" | "streak" | "bible" | "calendar" | "menu";
 
 interface NavDockProps {
     activeTab: Tab;
     onTabChange: (tab: Tab) => void;
 }
 
-const BUTTON_SIZE = 52; // px, fixed for all buttons
+const BUTTON_SIZE = 48; // px, adjusted for 7 tabs
 const PADDING = 6; // p-1.5 = 6px
 
 export default function NavDock({ activeTab, onTabChange }: NavDockProps) {
-    const [isVisible, setIsVisible] = useState(true);
-    const [lastScrollY, setLastScrollY] = useState(0);
-
     const tabs: { id: Tab; icon: any; label: string }[] = [
         { id: "home", icon: Home, label: "투데이" },
+        { id: "search", icon: BookOpen, label: "성경" },
+        { id: "hymns", icon: Music, label: "찬송가" },
         { id: "streak", icon: Flame, label: "연속" },
-        { id: "bible", icon: BookOpen, label: "성경" },
-        { id: "calendar", icon: Calendar, label: "달력" },
+        { id: "bible", icon: BarChart2, label: "여정" },
+        { id: "calendar", icon: Calendar, label: "기록" },
         { id: "menu", icon: Settings, label: "설정" },
     ];
 
     const activeIndex = tabs.findIndex(t => t.id === activeTab);
 
-    // Scroll detection
-    useEffect(() => {
-        const handleScroll = () => {
-            const currentScrollY = window.scrollY;
-            if (currentScrollY > lastScrollY && currentScrollY > 50) {
-                setIsVisible(false);
-            } else {
-                setIsVisible(true);
-            }
-            setLastScrollY(currentScrollY);
-        };
-        window.addEventListener("scroll", handleScroll, { passive: true });
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, [lastScrollY]);
+    // (스크롤에 따른 숨김 효과를 제거하고 항상 하단에 고정합니다)
 
     // Pill position: each button is BUTTON_SIZE wide, offset by PADDING
     const pillLeft = PADDING + activeIndex * BUTTON_SIZE;
 
     return (
         <div className={cn(
-            "fixed bottom-8 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out will-change-transform",
-            isVisible ? "translate-y-0 opacity-100" : "translate-y-[200%] opacity-0"
+            "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out will-change-transform"
         )}>
             {/* Glass Container - Pill Shape */}
             <div className="relative flex items-center p-1.5 rounded-[999px] bg-white/80 dark:bg-black/70 backdrop-blur-2xl border border-white/50 dark:border-white/10 shadow-2xl">

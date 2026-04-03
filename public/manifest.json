@@ -1,0 +1,31 @@
+{
+  "name": "성경 365 - Divine Light",
+  "short_name": "성경 365",
+  "description": "Premium 365 Days Bible Reading Journey",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo-final.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-white.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["lifestyle", "education"],
+  "shortcuts": [
+    {
+      "name": "오늘의 말씀",
+      "url": "/",
+      "icons": [{ "src": "/favicon.ico", "sizes": "64x64" }]
+    }
+  ]
+}

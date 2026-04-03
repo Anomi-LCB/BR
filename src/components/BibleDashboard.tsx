@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { format } from "date-fns";
-import { Flame, Trophy, Calendar, BarChart2, Settings, BookOpen, Heart } from "lucide-react";
+import { Flame, Trophy, Calendar, BarChart2, Settings, BookOpen, Heart, Music } from "lucide-react";
 import { BibleReadingPlan, UserProgress } from "@/types/bible";
 import { User } from "@supabase/supabase-js";
 import DateNavigator from "./DateNavigator";
@@ -17,9 +17,17 @@ import HeaderIsland from "./layout/HeaderIsland";
 import NavDock from "./layout/NavDock";
 import DashboardGrid, { GridCell } from "./layout/DashboardGrid";
 import { SmartCard } from "./ui/smart-card";
+import { GlassPanel } from "./ui/glass-panel";
+import { motion, AnimatePresence } from "framer-motion";
 import YearlyProgressView from "./YearlyProgressView";
 import SettingsView from "./SettingsView";
 import StreakHistoryView from "./StreakHistoryView";
+import BibleSearchTab from "./dashboard-tabs/BibleSearchTab";
+import HymnsTab from "./dashboard-tabs/HymnsTab";
+import DashboardWidget from "./ui/DashboardWidget";
+import BibleJourneyMap from "./BibleJourneyMap";
+import { useBibleStore } from "@/store/useBibleStore";
+import FullReadingView from "./FullReadingView";
 
 interface BibleDashboardProps {
     user: User | null;
@@ -105,24 +113,41 @@ const ENCOURAGEMENTS = [
     { emoji: "🎈", msg: "무거운 마음을 내려놓고, 가벼운 마음으로 말씀을 읽어보세요.", sub: "베드로전서 5:7 — 너희 모든 염려를 맡기라" },
 ];
 
+function AnimatedBackground() {
+    return (
+        <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-500/10 blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
+            <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] rounded-full bg-amber-500/5 blur-[100px] animate-pulse" style={{ animationDelay: '4s' }} />
+        </div>
+    );
+}
+
 function EncouragementBanner() {
     const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
     const today = ENCOURAGEMENTS[dayOfYear % ENCOURAGEMENTS.length];
 
     return (
-        <SmartCard variant="default" className="bg-gradient-to-r from-primary/5 via-background to-accent/5 border border-primary/10 dark:border-primary/20">
-            <div className="flex items-start gap-3">
-                <div className="text-2xl shrink-0 mt-0.5">{today.emoji}</div>
-                <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground/90 leading-relaxed">
-                        {today.msg}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground mt-1.5 italic">
-                        {today.sub}
-                    </p>
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+        >
+            <GlassPanel intensity="low" className="p-4 border border-primary/10 dark:border-white/10 group overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -mr-8 -mt-8 transition-transform group-hover:scale-110 duration-700" />
+                <div className="flex items-start gap-3 relative z-10">
+                    <div className="text-2xl shrink-0 mt-0.5">{today.emoji}</div>
+                    <div className="min-w-0">
+                        <p className="text-sm font-medium text-foreground/90 leading-relaxed">
+                            {today.msg}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground mt-1.5 italic font-serif">
+                            {today.sub}
+                        </p>
+                    </div>
                 </div>
-            </div>
-        </SmartCard>
+            </GlassPanel>
+        </motion.div>
     );
 }
 
@@ -137,7 +162,7 @@ export default function BibleDashboard({
     const router = useRouter();
     const searchParams = useSearchParams();
     const isGuest = true;
-    const [activeTab, setActiveTab] = useState<"home" | "bible" | "streak" | "calendar" | "menu">("home");
+    const [activeTab, setActiveTab] = useState<"home" | "search" | "hymns" | "streak" | "bible" | "calendar" | "menu">("home");
 
     // State
     const [selectedDate, setSelectedDate] = useState(initialDate);
@@ -148,6 +173,10 @@ export default function BibleDashboard({
     const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
     const [autoPlay, setAutoPlay] = useState(false);
     const [showEncouragement, setShowEncouragement] = useState(true);
+    const isAiEnabled = useBibleStore(state => state.isAiEnabled);
+
+    const [readingReference, setReadingReference] = useState<string | null>(null);
+    const [readingPlan, setReadingPlan] = useState<BibleReadingPlan | undefined>(undefined);
 
     // Apply global font size as CSS custom property
     useEffect(() => {
@@ -290,147 +319,246 @@ export default function BibleDashboard({
     // End of logic, start of render
 
     return (
-        <div className="min-h-screen bg-background">
-            <HeaderIsland title="성경 365" onLogoClick={() => setActiveTab("home")} />
+        <div className="min-h-screen bg-background relative selection:bg-primary/20 transition-colors duration-500">
+            <AnimatedBackground />
+
+            <HeaderIsland 
+                title="성경 365" 
+                onLogoClick={() => setActiveTab("home")} 
+                subtitle={activeTab === 'home' ? format(new Date(selectedDate), "MM월 dd일") : undefined}
+            />
 
             <main className="container mx-auto px-4 max-w-2xl pt-24 pb-32">
-                {activeTab === "home" && (
-                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                        <DashboardGrid>
-                            {/* Date Navigation & Hero Card */}
-                            <GridCell span="3" className="space-y-6">
-                                <DateNavigator
-                                    currentDate={selectedDate}
-                                    onDateChange={handleDateChange}
-                                />
-                                {targetPlan ? (
-                                    <BibleCard
-                                        plan={targetPlan}
-                                        isCompleted={isCompleted}
-                                        onToggle={() => handleToggle(targetPlan.id)}
-                                        videoDuration={videoDuration}
-                                        fontSize={fontSize}
-                                    />
-                                ) : (
-                                    <SmartCard variant="outline" className="p-12 text-center text-muted-foreground">
-                                        이 날의 읽기표가 없습니다.
-                                    </SmartCard>
-                                )}
-                            </GridCell>
-
-                            {/* Streak Card */}
-                            <GridCell span="1">
-                                <SmartCard
-                                    variant="elevated"
-                                    className="h-full flex flex-col justify-between cursor-pointer hover:border-orange-500/30 transition-colors group"
-                                    onClick={() => setActiveTab("streak")}
-                                >
-                                    <div className="flex justify-between items-start">
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground group-hover:text-orange-500 transition-colors">연속 읽기</span>
-                                        <Flame size={16} className="text-orange-500" />
-                                    </div>
-                                    <div>
-                                        <span className="text-2xl font-display font-medium">{streak}</span>
-                                        <span className="text-xs text-muted-foreground ml-1">일째</span>
-                                    </div>
-                                </SmartCard>
-                            </GridCell>
-
-                            {/* Progress Card */}
-                            <GridCell span="1">
-                                <SmartCard
-                                    variant="elevated"
-                                    className="h-full flex flex-col justify-between cursor-pointer hover:border-primary/30 transition-colors group"
-                                    onClick={() => setActiveTab("bible")}
-                                >
-                                    <div className="flex justify-between items-start">
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">진행률</span>
-                                        <Trophy size={16} className="text-primary" />
-                                    </div>
-                                    <div>
-                                        <span className="text-2xl font-display font-medium">{progressPercent}%</span>
-                                        <span className="text-xs text-muted-foreground ml-1">완료</span>
-                                    </div>
-                                </SmartCard>
-                            </GridCell>
-
-                            {/* Remaining Days Card */}
-                            <GridCell span="1">
-                                <SmartCard
-                                    variant="elevated"
-                                    className="h-full flex flex-col justify-between cursor-pointer hover:border-primary/30 transition-colors group"
-                                    onClick={() => setActiveTab("calendar")}
-                                >
-                                    <div className="flex justify-between items-start">
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">남은 기간</span>
-                                    </div>
-                                    <div>
-                                        <span className="text-2xl font-display font-medium">{daysLeft}</span>
-                                        <span className="text-xs text-muted-foreground ml-1">일</span>
-                                    </div>
-                                </SmartCard>
-                            </GridCell>
-
-                            {/* Audio Bible */}
-                            <GridCell span="3" className="space-y-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">멀티미디어 자료</h3>
-                                </div>
-                                <YoutubePlayer selectedDate={selectedDate} autoPlay={autoPlay} />
-                            </GridCell>
-
-                            {/* Encouragement Message */}
-                            {showEncouragement && (
-                                <GridCell span="3">
-                                    <EncouragementBanner />
+                <AnimatePresence mode="wait">
+                    {activeTab === "home" && (
+                        <motion.div 
+                            key="home"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.5, ease: "easeOut" }}
+                        >
+                            <DashboardGrid>
+                                <GridCell span="3" className="space-y-6">
+                                    <DateNavigator currentDate={selectedDate} onDateChange={handleDateChange} />
+                                    {targetPlan ? (
+                                        <BibleCard
+                                            plan={targetPlan}
+                                            isCompleted={isCompleted}
+                                            onToggle={() => handleToggle(targetPlan.id)}
+                                            onRead={(plan) => {
+                                                setReadingPlan(plan);
+                                                setReadingReference(plan.verses[0] || plan.title);
+                                            }}
+                                            videoDuration={videoDuration}
+                                            fontSize={fontSize}
+                                        />
+                                    ) : (
+                                        <SmartCard variant="outline" className="p-12 text-center text-muted-foreground">
+                                            이 날의 읽기표가 없습니다.
+                                        </SmartCard>
+                                    )}
                                 </GridCell>
-                            )}
-                        </DashboardGrid>
-                    </div>
-                )}
 
-                {activeTab === "bible" && (
-                    <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-                        <div className="flex items-center gap-3 mb-6 px-2">
-                            <div className="p-2 rounded-full bg-primary/10">
-                                <BookOpen size={20} className="text-primary" />
+                                <GridCell span="1">
+                                    <SmartCard variant="elevated" className="h-full flex flex-col justify-between cursor-pointer group" onClick={() => setActiveTab("streak")}>
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">연속 읽기</span>
+                                            <Flame size={16} className="text-orange-500" />
+                                        </div>
+                                        <div>
+                                            <span className="text-2xl font-display">{streak}</span>
+                                            <span className="text-xs text-muted-foreground ml-1">일째</span>
+                                        </div>
+                                    </SmartCard>
+                                </GridCell>
+
+                                <GridCell span="1">
+                                    <SmartCard variant="elevated" className="h-full flex flex-col justify-between cursor-pointer group" onClick={() => setActiveTab("bible")}>
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">진행률</span>
+                                            <Trophy size={16} className="text-primary" />
+                                        </div>
+                                        <div>
+                                            <span className="text-2xl font-display">{progressPercent}%</span>
+                                            <span className="text-xs text-muted-foreground ml-1">완료</span>
+                                        </div>
+                                    </SmartCard>
+                                </GridCell>
+
+                                <GridCell span="1">
+                                    <SmartCard variant="elevated" className="h-full flex flex-col justify-between cursor-pointer group" onClick={() => setActiveTab("calendar")}>
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">남은 기간</span>
+                                            <Calendar size={16} className="text-primary" />
+                                        </div>
+                                        <div>
+                                            <span className="text-2xl font-display">{daysLeft}</span>
+                                            <span className="text-xs text-muted-foreground ml-1">일</span>
+                                        </div>
+                                    </SmartCard>
+                                </GridCell>
+
+                                <GridCell span="3" className="space-y-4">
+                                    <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">멀티미디어 자료</h3>
+                                    <YoutubePlayer selectedDate={selectedDate} autoPlay={autoPlay} />
+                                </GridCell>
+
+                                {showEncouragement && (
+                                    <GridCell span="3">
+                                        <EncouragementBanner />
+                                    </GridCell>
+                                )}
+                            </DashboardGrid>
+                        </motion.div>
+                    )}
+
+                    {activeTab === "search" && (
+                        <motion.div 
+                            key="search"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.4 }}
+                        >
+                            <div className="flex items-center gap-3 mb-6 px-2">
+                                <div className="p-2 rounded-full bg-primary/10">
+                                    <BookOpen size={20} className="text-primary" />
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-serif font-bold">성경 말씀 검색</h2>
+                                    <p className="text-xs text-muted-foreground">원하는 구절을 찾아보세요</p>
+                                </div>
                             </div>
-                            <div>
-                                <h2 className="text-xl font-serif font-bold">성경 읽기 여정</h2>
-                                <p className="text-xs text-muted-foreground">66권의 모든 기록</p>
+                            <BibleSearchTab onSelect={(ref) => setReadingReference(ref)} />
+                        </motion.div>
+                    )}
+
+                    {activeTab === "hymns" && (
+                        <motion.div 
+                            key="hymns"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.4 }}
+                        >
+                            <div className="flex items-center gap-3 mb-6 px-2">
+                                <div className="p-2 rounded-full bg-primary/10">
+                                    <Music size={20} className="text-primary" />
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-serif font-bold">찬송가 645장</h2>
+                                    <p className="text-xs text-muted-foreground">은혜로운 찬양의 시간</p>
+                                </div>
                             </div>
-                        </div>
-                        <SmartCard variant="default" padding="none" className="bg-card/30 border border-border/50 dark:border-white/15">
-                            <div className="p-4">
-                                <BibleProgressMap completedVerses={completedVerses} />
+                            <HymnsTab />
+                        </motion.div>
+                    )}
+
+                    {activeTab === "streak" && (
+                        <motion.div 
+                            key="streak"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.4 }}
+                        >
+                             <div className="flex items-center gap-3 mb-6 px-2">
+                                <div className="p-2 rounded-full bg-orange-500/10">
+                                    <Flame size={20} className="text-orange-500" />
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-serif font-bold">연속 읽기 기록</h2>
+                                    <p className="text-xs text-muted-foreground">멈추지 않는 말씀의 열정</p>
+                                </div>
                             </div>
-                        </SmartCard>
-                    </div>
-                )}
+                            <StreakHistoryView
+                                progress={userProgress}
+                                onBack={() => setActiveTab("home")}
+                            />
+                        </motion.div>
+                    )}
 
-                {activeTab === "calendar" && (
-                    <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-                        <YearlyProgressView
-                            progress={userProgress}
-                            allPlans={allPlans}
-                            currentDate={selectedDate}
-                        />
-                    </div>
-                )}
+                    {activeTab === "bible" && (
+                        <motion.div 
+                            key="bible"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.4 }}
+                        >
+                            <div className="flex items-center gap-3 mb-6 px-2">
+                                <div className="p-2 rounded-full bg-primary/10">
+                                    <BarChart2 size={20} className="text-primary" />
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-serif font-bold">성경 완독 여정</h2>
+                                    <p className="text-xs text-muted-foreground">말씀의 지형도를 따라 걷는 영적 여정</p>
+                                </div>
+                            </div>
+                            <BibleJourneyMap />
+                        </motion.div>
+                    )}
 
-                {activeTab === "menu" && (
-                    <SettingsView />
-                )}
+                    {activeTab === "calendar" && (
+                        <motion.div 
+                            key="calendar"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.4 }}
+                        >
+                            <div className="flex items-center gap-3 mb-6 px-2">
+                                <div className="p-2 rounded-full bg-primary/10">
+                                    <Calendar size={20} className="text-primary" />
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-serif font-bold">성경 읽기 달력</h2>
+                                    <p className="text-xs text-muted-foreground">전체 읽기 기록 확인</p>
+                                </div>
+                            </div>
+                            <YearlyProgressView
+                                progress={userProgress}
+                                allPlans={allPlans}
+                                currentDate={selectedDate}
+                            />
+                        </motion.div>
+                    )}
 
-                {activeTab === "streak" && (
-                    <StreakHistoryView
-                        progress={userProgress}
-                        onBack={() => setActiveTab("home")}
-                    />
-                )}
+                    {activeTab === "menu" && (
+                        <motion.div 
+                            key="menu"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <div className="flex items-center gap-3 mb-6 px-2">
+                                <div className="p-2 rounded-full bg-primary/10">
+                                    <Settings size={20} className="text-primary" />
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-serif font-bold">앱 설정</h2>
+                                    <p className="text-xs text-muted-foreground">사용자 환경 맞춤화</p>
+                                </div>
+                            </div>
+                            <SettingsView />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </main>
 
             <NavDock activeTab={activeTab} onTabChange={(tab: any) => setActiveTab(tab)} />
+
+            {readingReference && (
+                <FullReadingView
+                    plan={readingPlan || { id: 0, day_of_year: 0, date: '', title: readingReference, verses: [readingReference] }}
+                    onClose={() => {
+                        setReadingReference(null);
+                        setReadingPlan(undefined);
+                    }}
+                />
+            )}
         </div>
     );
 }

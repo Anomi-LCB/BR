@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "android/**",
+    "ios/**",
+    "eslint_report*.json",
+    "eslint_output.txt",
+    "*.log",
   ]),
 ]);
 

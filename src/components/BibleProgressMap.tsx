@@ -10,6 +10,7 @@ import { SmartCard } from "@/components/ui/smart-card";
 
 interface BibleProgressMapProps {
     completedVerses: string[];
+    onChapterClick?: (reference: string) => void;
 }
 
 interface BibleBookWithProgress extends BibleBook {
@@ -17,7 +18,7 @@ interface BibleBookWithProgress extends BibleBook {
     isCompleted: boolean;
 }
 
-export default function BibleProgressMap({ completedVerses }: BibleProgressMapProps) {
+export default function BibleProgressMap({ completedVerses, onChapterClick }: BibleProgressMapProps) {
     const [selectedBook, setSelectedBook] = useState<BibleBookWithProgress | null>(null);
     const [activeTab, setActiveTab] = useState<'OT' | 'NT'>('OT');
 
@@ -165,17 +166,22 @@ export default function BibleProgressMap({ completedVerses }: BibleProgressMapPr
                                 {Array.from({ length: selectedBook.chapters }, (_, i) => i + 1).map(chapter => {
                                     const isRead = completedChapterSet.has(`${selectedBook.name} ${chapter}`);
                                     return (
-                                        <div
+                                        <button
                                             key={chapter}
+                                            onClick={() => {
+                                                if (onChapterClick) {
+                                                    onChapterClick(`${selectedBook.name} ${chapter}${selectedBook.name === '시편' ? '편' : '장'}`);
+                                                }
+                                            }}
                                             className={cn(
                                                 "aspect-square rounded-md flex items-center justify-center text-xs font-medium border transition-colors",
                                                 isRead
                                                     ? "bg-primary text-primary-foreground border-primary"
-                                                    : "bg-muted/30 text-muted-foreground border-transparent"
+                                                    : "bg-muted/30 text-muted-foreground border-transparent hover:bg-muted/50"
                                             )}
                                         >
                                             {chapter}
-                                        </div>
+                                        </button>
                                     );
                                 })}
                             </div>

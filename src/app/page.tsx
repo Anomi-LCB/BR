@@ -1,22 +1,18 @@
 import BibleDashboard from "@/components/BibleDashboard";
 import { getAllReadingPlans } from "@/lib/local-data";
 import { UserProgress } from "@/types/bible";
+import { Suspense } from "react";
 
-
-interface HomeProps {
-  searchParams: Promise<{ date?: string }>;
-}
-
-export default async function Home({ searchParams }: HomeProps) {
+export default function Home() {
   // Supabase Init Deleted
 
   // Auth Logic skipped (Guest Mode enforce)
   const user = null;
 
-  const resolvedSearchParams = await searchParams;
+  // Server doesn't read searchParams for static export. 
+  // The client component uses useSearchParams to override the date dynamically.
   const todayStrKST = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
-  const selectedDate = resolvedSearchParams.date || todayStrKST;
-
+  const selectedDate = todayStrKST;
 
   // 전체 성경 읽기 계획 가져오기 (Local Data)
   const allPlans = getAllReadingPlans();
@@ -29,7 +25,6 @@ export default async function Home({ searchParams }: HomeProps) {
 
   // 사용자 전체 진행 상황 가져오기 (Empty for server-side, client handles local storage)
   const allProgress: UserProgress[] = [];
-
 
   // 현재 날짜의 플랜 찾기 (연도 무관, SK-YY Matching)
   let rawTargetPlan;
@@ -50,15 +45,16 @@ export default async function Home({ searchParams }: HomeProps) {
     }
   }
 
-
   return (
-    <BibleDashboard
-      user={user}
-      allPlans={allPlans || []}
-      initialProgress={allProgress || []}
-      appSettings={appSettings || []}
-      initialDate={selectedDate}
-      rawTargetPlan={rawTargetPlan}
-    />
+    <Suspense fallback={<div className="min-h-screen bg-background flex rounded-md items-center justify-center p-8">Loading...</div>}>
+      <BibleDashboard
+        user={user}
+        allPlans={allPlans || []}
+        initialProgress={allProgress || []}
+        appSettings={appSettings || []}
+        initialDate={selectedDate}
+        rawTargetPlan={rawTargetPlan}
+      />
+    </Suspense>
   );
 }

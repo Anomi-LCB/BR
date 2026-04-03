@@ -1,11 +1,22 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  // Turbopack 관련 오류가 발생하여 일시적으로 설정을 조정하거나 
-  // 필요한 경우 여기에 추가 구성을 넣습니다.
-  devIndicators: {
-    buildActivity: false,
-    appIsrStatus: false,
+import type { NextConfig } from "next";
+import withBundleAnalyzer from '@next/bundle-analyzer';
+
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
+
+const nextConfig: NextConfig = {
+  output: 'export',
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'img.youtube.com',
+      },
+    ],
   },
+
 };
 
-module.exports = nextConfig;
+export default bundleAnalyzer(nextConfig);

@@ -1,0 +1,34 @@
+{
+  "사사기": {
+    "old": "jdg",
+    "new": "judg"
+  },
+  "아가": {
+    "old": "sng",
+    "new": "son"
+  },
+  "에스겔": {
+    "old": "ezk",
+    "new": "FAILED"
+  },
+  "요엘": {
+    "old": "jol",
+    "new": "joe"
+  },
+  "나훔": {
+    "old": "nam",
+    "new": "nah"
+  },
+  "마가복음": {
+    "old": "mrk",
+    "new": "mar"
+  },
+  "요한복음": {
+    "old": "jhn",
+    "new": "joh"
+  },
+  "빌립보서": {
+    "old": "php",
+    "new": "phi"
+  }
+}

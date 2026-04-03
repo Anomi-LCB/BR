@@ -17,3 +17,5 @@ export type UserProgress = {
   completed_at?: string;
   reading_plan?: BibleReadingPlan;
 };
+
+export type Badge = { id: string; name: string; description: string; icon: string; rarity: "common" | "rare" | "epic" | "legendary"; earnedAt?: string; };

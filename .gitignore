@@ -39,3 +39,32 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# logs & temporary files
+*.log
+*.txt
+build*.log
+eslint_report*.json
+errors*.txt
+
+# APK and build artifacts
+*.apk
+android/
+ios/
+.vscode/
+
+# temporary fix scripts
+fix_*.py
+fix_*.js
+clean_bytes.py
+strip_null_bytes.py
+find_mojibake.py
+check_abbr*.js
+add_badge.js
+apply_hymns.js
+reset.js
+setup_tw.js
+test-parse.js
+
+# data temp
+scripts/tmp_hymnal*/
