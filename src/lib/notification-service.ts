@@ -1,6 +1,7 @@
 "use client";
 
 import { LocalNotifications, ScheduleOn } from "@capacitor/local-notifications";
+import { createClient } from "./supabase-client";
 
 // ── Types ──
 export interface NotificationSettings {
@@ -132,11 +133,94 @@ export async function scheduleDailyNotifications(
     }
 }
 
-// ── Reschedule from Storage ──
 export async function rescheduleFromSettings(todayTitle?: string, todayVerse?: string): Promise<void> {
     const settings = loadNotificationSettings();
     if (settings.enabled) {
+        // 1. Local scheduling (fallback/native)
         await scheduleDailyNotifications(settings, todayTitle, todayVerse);
+        
+        // 2. Web Push scheduling (standard/closed app)
+        await syncWebPushSubscription(settings);
+    }
+}
+
+// ── Web Push Subscription ──
+
+/**
+ * Convert VAPID key to Uint8Array for pushManager.subscribe
+ */
+function urlBase64ToUint8Array(base64String: string) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
+
+/**
+ * Sync Web Push subscription with Supabase
+ */
+export async function syncWebPushSubscription(settings: NotificationSettings): Promise<void> {
+    if (typeof window === "undefined" || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+        console.warn("Push notifications not supported in this browser");
+        return;
+    }
+
+    try {
+        const registration = await navigator.serviceWorker.ready;
+        
+        // If notifications are disabled, unsubscribe
+        if (!settings.enabled) {
+            const subscription = await registration.pushManager.getSubscription();
+            if (subscription) {
+                await subscription.unsubscribe();
+                // Optionally remove from server too
+            }
+            return;
+        }
+
+        // Get permission
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') return;
+
+        // Apply VAPID Public Key
+        const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+        if (!vapidPublicKey) {
+            console.error("VAPID Public Key missing from environment");
+            return;
+        }
+
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+        });
+
+        // Save to Supabase
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        const { error } = await supabase
+            .from('push_subscriptions')
+            .upsert({
+                endpoint: subscription.endpoint,
+                subscription_json: JSON.stringify(subscription),
+                alarm_time: `${String(settings.hour).padStart(2, '0')}:${String(settings.minute).padStart(2, '0')}:00`,
+                user_id: user?.id || null,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'endpoint' });
+
+        if (error) throw error;
+        console.log("Web Push subscription synced successfully");
+
+    } catch (err) {
+        console.error("Failed to sync Web Push subscription:", err);
     }
 }
 

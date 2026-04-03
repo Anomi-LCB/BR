@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
 import ClientProviders from "@/components/ClientProviders";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
 const fontDisplay = Fraunces({
   subsets: ["latin"],
@@ -42,7 +43,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  themeColor: "#ffffff", // Dynamic backup
+  themeColor: "#0f172a", // Match manifest background
 };
 
 export default function RootLayout({
@@ -68,6 +69,7 @@ export default function RootLayout({
         >
           <ClientProviders>
             {children}
+            <PWAInstallPrompt />
           </ClientProviders>
         </ThemeProvider>
       </body>

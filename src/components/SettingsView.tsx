@@ -11,6 +11,12 @@ import { useTheme } from "next-themes";
 import { SmartCard } from "@/components/ui/smart-card";
 import { cn } from "@/lib/utils";
 import { useBibleStore } from "@/store/useBibleStore";
+import { 
+    loadNotificationSettings, 
+    saveNotificationSettings, 
+    rescheduleFromSettings,
+    NotificationSettings 
+} from "@/lib/notification-service";
 
 // --- Toggle Switch ---
 function ToggleSwitch({ checked, onCheckedChange }: { checked: boolean; onCheckedChange: (c: boolean) => void }) {
@@ -80,6 +86,8 @@ export default function SettingsView() {
     
     const isAiEnabled = useBibleStore(state => state.isAiEnabled);
     const toggleAiStatus = useBibleStore(state => state.toggleAiStatus);
+
+    const [notifSettings, setNotifSettings] = useState<NotificationSettings>(() => loadNotificationSettings());
 
     useEffect(() => setMounted(true), []);
 
@@ -174,6 +182,20 @@ export default function SettingsView() {
             await navigator.clipboard.writeText(text);
             alert('📋 클립보드에 복사되었습니다!');
         }
+    };
+
+    const handleNotifToggle = async (enabled: boolean) => {
+        const newSettings = { ...notifSettings, enabled };
+        setNotifSettings(newSettings);
+        saveNotificationSettings(newSettings);
+        await rescheduleFromSettings();
+    };
+
+    const handleTimeChange = async (hour: number, minute: number) => {
+        const newSettings = { ...notifSettings, hour, minute };
+        setNotifSettings(newSettings);
+        saveNotificationSettings(newSettings);
+        await rescheduleFromSettings();
     };
 
     if (!mounted) return null;
@@ -273,6 +295,51 @@ export default function SettingsView() {
                         <ToggleSwitch checked={isAiEnabled} onCheckedChange={(val) => toggleAiStatus(val)} />
                     }
                 />
+            </Section>
+
+            {/* === Notifications === */}
+            <Section title="알림 및 습관" icon={<Bell size={14} />}>
+                <SettingRow
+                    icon={Bell}
+                    iconColor="text-orange-500"
+                    iconBg="bg-orange-500/10"
+                    label="매일 말씀 알람"
+                    description="말씀 읽기를 잊지 않도록 알림을 보냅니다"
+                    action={
+                        <ToggleSwitch checked={notifSettings.enabled} onCheckedChange={handleNotifToggle} />
+                    }
+                />
+                {notifSettings.enabled && (
+                    <div className="px-4 pb-4 space-y-3 animate-in slide-in-from-top-2 duration-300">
+                        <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5 uppercase tracking-wider">
+                            <Clock size={12} /> 알람 시간 설정
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <select 
+                                value={notifSettings.hour}
+                                onChange={(e) => handleTimeChange(parseInt(e.target.value), notifSettings.minute)}
+                                className="flex-1 h-10 bg-muted/50 border border-border/50 rounded-xl text-sm font-bold text-center appearance-none focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            >
+                                {Array.from({ length: 24 }).map((_, i) => (
+                                    <option key={i} value={i}>{String(i).padStart(2, '0')}시</option>
+                                ))}
+                            </select>
+                            <span className="text-muted-foreground">:</span>
+                            <select 
+                                value={notifSettings.minute}
+                                onChange={(e) => handleTimeChange(notifSettings.hour, parseInt(e.target.value))}
+                                className="flex-1 h-10 bg-muted/50 border border-border/50 rounded-xl text-sm font-bold text-center appearance-none focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            >
+                                {Array.from({ length: 12 }).map((_, i) => (
+                                    <option key={i * 5} value={i * 5}>{String(i * 5).padStart(2, '0')}분</option>
+                                ))}
+                            </select>
+                        </div>
+                        <p className="text-[9px] text-muted-foreground/60 leading-tight">
+                            * iOS 사용자는 '홈 화면에 추가' 후 알림 권한을 허용해야 작동합니다.
+                        </p>
+                    </div>
+                )}
             </Section>
 
             {/* === Share & Community === */}
