@@ -51,7 +51,8 @@ export async function fetchYoutubePlaylist(): Promise<YoutubeVideo[]> {
     const cachedData = localStorage.getItem(CACHE_KEY);
     if (cachedData) {
         const { videos, timestamp } = JSON.parse(cachedData);
-        if (Date.now() - timestamp < CACHE_EXPIRY) {
+        // 비어있지 않은 유효한 캐시만 반환
+        if (videos && videos.length > 0 && (Date.now() - timestamp < CACHE_EXPIRY)) {
             return videos;
         }
     }
@@ -80,7 +81,8 @@ export async function fetchYoutubePlaylist(): Promise<YoutubeVideo[]> {
 
             const items = data.items.map((item: any, index: number) => {
                 const title = item.snippet.title;
-                const match = title.match(/(\d+)회차/);
+                // 'X회차' 또는 'X일차' 또는 'X일' 형식을 모두 지원
+                const match = title.match(/(\d+)(회차|일차|일)/);
                 const dayNumber = match ? parseInt(match[1]) : (allVideos.length + index + 1);
                 const videoId = item.snippet.resourceId.videoId;
 
@@ -98,11 +100,13 @@ export async function fetchYoutubePlaylist(): Promise<YoutubeVideo[]> {
             nextPageToken = data.nextPageToken;
         } while (nextPageToken);
 
-        // 3. 캐시 저장
-        localStorage.setItem(CACHE_KEY, JSON.stringify({
-            videos: allVideos,
-            timestamp: Date.now()
-        }));
+        // 3. 캐시 저장 (데이터가 있을 때만)
+        if (allVideos.length > 0) {
+            localStorage.setItem(CACHE_KEY, JSON.stringify({
+                videos: allVideos,
+                timestamp: Date.now()
+            }));
+        }
 
         return allVideos;
     } catch (error) {
@@ -113,33 +117,35 @@ export async function fetchYoutubePlaylist(): Promise<YoutubeVideo[]> {
 
 /**
  * 특정 일차에 해당하는 영상을 반환 (재생목록 예외 처리 포함)
- * - 1~245회: 순차적 매칭
- * - 246회: 영상 없음
- * - 247~354회: 1회 밀린 순번 (246번째 영상부터)
- * - 355회: 재생목록 가장 마지막(364번째) 영상
- * - 356~365회: 2회 밀린 순번
+ * - 인덱스가 아닌 dayNumber 속성을 직접 검색하여 데이터 정합성 보장
  */
 export function getVideoForDay(videos: YoutubeVideo[], dayNumber: number): YoutubeVideo | null {
-    if (videos.length === 0) return null;
+    if (!videos || videos.length === 0) return null;
 
-    const day = dayNumber > 365 ? 365 : dayNumber;
+    const targetDay = dayNumber > 365 ? 365 : dayNumber;
 
-    if (day <= 245) {
-        // 1-245회: 정상 순번 (index 0~244)
-        return videos[day - 1] || null;
-    } else if (day === 246) {
-        // 246회: 영상 없음
-        return null;
-    } else if (day >= 247 && day <= 354) {
-        // 247~354회: 1회 밀림 (index = day - 2)
-        // 예: 247일차 -> 246번째 영상 (index 245)
-        return videos[day - 2] || null;
-    } else if (day === 355) {
-        // 355회: 재생목록 가장 마지막 (364번째, index 363)
-        return videos[363] || videos[videos.length - 1] || null;
-    } else {
-        // 356~365회: 2회 밀림 (index = day - 3)
-        // 예: 356일차 -> 354번째 영상 (index 353)
-        return videos[day - 3] || null;
+    // 1. 정확한 dayNumber 매칭 시도
+    let video = videos.find(v => v.dayNumber === targetDay);
+
+    // 2. 매칭되는 영상이 없을 경우의 예외 처리 (Day 246 등)
+    if (!video) {
+        if (targetDay === 246) {
+            console.log("Day 246 has no assigned video.");
+            return null;
+        }
+        
+        // 3. Fallback: 인덱스 기반으로 시도 (재생목록 순서가 맞을 경우)
+        // 단, 246화 이후의 밀림 현상 반영
+        if (targetDay <= 245) {
+            video = videos[targetDay - 1];
+        } else if (targetDay >= 247 && targetDay <= 354) {
+            video = videos[targetDay - 2];
+        } else if (targetDay === 355) {
+            video = videos[363] || videos[videos.length - 1];
+        } else {
+            video = videos[targetDay - 3];
+        }
     }
+
+    return video || null;
 }

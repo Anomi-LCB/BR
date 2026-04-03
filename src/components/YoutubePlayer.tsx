@@ -37,11 +37,11 @@ export default function YoutubePlayer({ selectedDate, autoPlay = false }: Youtub
                     setVideoId(videoData.videoId);
                     setCurrentVideo(videoData);
                 } else {
-                    setError("No video found for this day.");
+                    setError("해당 날짜의 영상을 찾을 수 없습니다.");
                 }
             } catch (err) {
                 console.error("Failed to fetch video:", err);
-                setError("Failed to load video.");
+                setError("영상 로드 중 오류가 발생했습니다.");
             } finally {
                 setLoading(false);
             }
@@ -76,12 +76,15 @@ export default function YoutubePlayer({ selectedDate, autoPlay = false }: Youtub
                 {loading ? (
                     <div className="flex flex-col items-center gap-2 animate-pulse">
                         <Loader2 className="w-8 h-8 animate-spin text-white/50" />
-                        <span className="text-xs font-medium text-white/50">로딩 중...</span>
+                        <span className="text-xs font-medium text-white/50">영상을 불러오는 중...</span>
                     </div>
                 ) : error || !videoId ? (
-                    <div className="flex flex-col items-center gap-2 text-white/50">
+                    <div className="flex flex-col items-center gap-2 text-white/50 px-6 text-center">
                         <AlertCircle className="w-8 h-8 opacity-50" />
-                        <span className="text-xs font-medium">{error || "영상을 찾을 수 없습니다."}</span>
+                        <span className="text-xs font-medium leading-relaxed">
+                            {error || "영상을 찾을 수 없습니다."}<br/>
+                            <span className="text-[10px] opacity-60">재생목록에 아직 업로드되지 않았을 수 있습니다.</span>
+                        </span>
                     </div>
                 ) : !isPlaying ? (
                     <div
