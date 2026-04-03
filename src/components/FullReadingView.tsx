@@ -566,12 +566,12 @@ export default function FullReadingView({ plan, onClose, onNext, onPrev }: FullR
                             <h3 className="text-base font-bold mb-4 font-serif text-primary sticky top-0 bg-card py-2 border-b">
                                 {BIBLE_BOOKS[selectedBookIndex].name} 몇 장을 읽으시겠어요?
                             </h3>
-                            <div className="grid grid-cols-5 sm:grid-cols-7 gap-2">
+                            <div className="grid grid-cols-7 sm:grid-cols-10 gap-2">
                                 {Array.from({ length: BIBLE_BOOKS[selectedBookIndex].chapters }).map((_, i) => (
                                     <button
                                         key={i}
                                         onClick={() => navigateToChapter(BIBLE_BOOKS[selectedBookIndex].name, i + 1)}
-                                        className="h-10 flex items-center justify-center bg-muted/30 hover:bg-primary hover:text-primary-foreground border rounded-lg transition-colors active:scale-95"
+                                        className="h-9 flex items-center justify-center bg-muted/30 hover:bg-primary hover:text-primary-foreground border rounded-lg transition-colors active:scale-95"
                                     >
                                         <span className="text-sm font-bold font-sans">{i + 1}</span>
                                     </button>

@@ -17,8 +17,8 @@ export default function BibleTab({ completedVerses, onChapterClick }: BibleTabPr
                     <BookOpen size={20} className="text-primary" />
                 </div>
                 <div>
-                    <h2 className="text-xl font-serif font-bold">?깃꼍 ?쎄린 ?ъ젙</h2>
-                    <p className="text-xs text-muted-foreground">66沅뚯쓽 紐⑤뱺 湲곕줉</p>
+                    <h2 className="text-xl font-serif font-bold">성경 읽기 여정</h2>
+                    <p className="text-xs text-muted-foreground">66권의 모든 기록</p>
                 </div>
             </div>
             <SmartCard variant="default" padding="none" className="bg-card/30 border border-border/50 dark:border-white/15">

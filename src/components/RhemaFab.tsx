@@ -31,11 +31,11 @@ export default function RhemaFab() {
                                 <div className="flex flex-col items-center justify-center h-full p-6 text-center space-y-4">
                                     <AlertCircle className="w-12 h-12 text-red-500/50" />
                                     <p className="text-sm text-muted-foreground">
-                                        梨쀫큸??遺덈윭?ㅻ뒗 以?臾몄젣媛� 諛쒖깮?덉뒿?덈떎.<br />
-                                        ?좎떆 ???ㅼ떆 ?쒕룄?댁＜?몄슂.
+                                        챗봇을 불러오는 중 문제가 발생했습니다.<br />
+                                        잠시 후 다시 시도해주세요.
                                     </p>
                                     <Button variant="outline" size="sm" onClick={() => setIsOpen(false)}>
-                                        ?リ린
+                                        닫기
                                     </Button>
                                 </div>
                             }>

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useMemo } from "react";
 import { Search, X } from "lucide-react";
@@ -73,7 +73,7 @@ export default function BibleSearchTab({ onSelect }: BibleSearchTabProps) {
                     <h3 className="text-sm font-bold mb-4 text-muted-foreground sticky top-0 bg-background py-2">
                         {bookFiltered.length > 0 ? BIBLE_BOOKS[selectedBookIndex]?.name : ''}
                     </h3>
-                    <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                    <div className="grid grid-cols-6 sm:grid-cols-8 gap-2">
                         {bookFiltered.length > 0 && Array.from({ length: BIBLE_BOOKS[selectedBookIndex]?.chapters || 0 }).map((_, i) => (
                             <button
                                 key={i}

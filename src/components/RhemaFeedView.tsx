@@ -31,8 +31,8 @@ export default function RhemaFeedView({ journals, onClose }: RhemaFeedViewProps)
                     <X size={24} />
                 </button>
                 <div className="w-16 h-1 bg-white/20 mb-6 rounded-full" />
-                <p className="font-bold">?꾩쭅 ?뚯븘蹂??쇰뱶媛� ?놁뒿?덈떎.</p>
-                <p className="text-sm text-white/60 mt-2">?ㅻ뒛??留먯????쎄퀬 臾듭긽???④꺼蹂댁꽭??</p>
+                <p className="font-bold">아직 돌아볼 피드가 없습니다.</p>
+                <p className="text-sm text-white/60 mt-2">오늘의 말씀을 읽고 묵상을 남겨보세요.</p>
             </div>
         );
     }
@@ -100,13 +100,13 @@ export default function RhemaFeedView({ journals, onClose }: RhemaFeedViewProps)
                                         className={`flex items-center gap-2 text-xs font-bold transition-colors ${likedIds.has(journal.id) ? 'text-red-500' : 'text-white/60 hover:text-white'}`}
                                     >
                                         <Heart size={16} className={likedIds.has(journal.id) ? "fill-red-500 text-red-500" : ""} />
-                                        <span>?�?쒕줈?뚯슂</span>
+                                        <span>응원해요</span>
                                     </button>
                                     <button
-                                        onClick={() => shareContent("?깃꼍 365 臾듭긽", `${journal.rhema_verse ? `"${journal.rhema_verse}"\n\n` : ''}${journal.content}`)}
+                                        onClick={() => shareContent("성경 365 묵상", `${journal.rhema_verse ? `"${journal.rhema_verse}"\n\n` : ''}${journal.content}`)}
                                         className="flex items-center gap-2 text-xs font-bold text-white/60 hover:text-white transition-colors ml-auto"
                                     >
-                                        <Share size={16} /> <span>怨듭쑀</span>
+                                        <Share size={16} /> <span>공유</span>
                                     </button>
                                 </div>
                             </div>
@@ -114,7 +114,7 @@ export default function RhemaFeedView({ journals, onClose }: RhemaFeedViewProps)
                             {/* Scroll Indicator Guide */}
                             {index < feedItems.length - 1 && (
                                 <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center opacity-40 animate-pulse">
-                                    <span className="text-[10px] uppercase tracking-widest font-bold mb-2">?ㅼ쓬 臾듭긽蹂닿린</span>
+                                    <span className="text-[10px] uppercase tracking-widest font-bold mb-2">다음 묵상 보기</span>
                                     <div className="w-4 h-8 rounded-full border border-white flex items-start justify-center p-1">
                                         <div className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" />
                                     </div>

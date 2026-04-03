@@ -1,3 +1,4 @@
+export const dynamic = 'force-static';
 import { google, embeddingModel } from '@/lib/ai-client';
 import { streamText, embed } from 'ai';
 import { createClient } from '@supabase/supabase-js';

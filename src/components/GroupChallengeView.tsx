@@ -191,13 +191,6 @@ export default function GroupChallengeView({ user, streak, progress }: GroupChal
                 setPresenceState(state as Record<string, Presence[]>);
             })
             .on('broadcast', { event: 'activity' }, (payload: { payload: BroadcastPayload }) => {
-                // Note: Supabase broadcast payload structure might be wrapped or direct depending on version/client
-                // Usually it's in payload.payload or just payload depending on how it's sent.
-                // Let's assume standard payload for now.
-                // Correct logic: .on receives the payload directly.
-                const { memberName, type } = payload.payload || payload; // Handle potential wrapping
-                // Actually typescript might complain if I access .payload on BroadcastPayload interface?
-                // Let's cast to any for the payload reception to be safe or define exact wrapper
                 const actualPayload = (payload as any).payload || payload;
                 const { memberName: name, type: msgType } = actualPayload as BroadcastPayload;
 
@@ -265,7 +258,7 @@ export default function GroupChallengeView({ user, streak, progress }: GroupChal
 
         if (error) {
             console.error("Message send failed:", error);
-            alert("硫붿떆吏� ?꾩넚 ?ㅽ뙣");
+            alert("메시지 전송 실패");
         } else {
             setNewMessage("");
         }
@@ -280,8 +273,6 @@ export default function GroupChallengeView({ user, streak, progress }: GroupChal
             event: 'poke',
             payload: { from: myName, to: targetName, emoji: "👋" }
         });
-
-        // Optional: Local feedback or toast could be added here
     };
 
     if (!groupId) {
@@ -319,7 +310,7 @@ export default function GroupChallengeView({ user, streak, progress }: GroupChal
 
                 <button className="w-full py-3 rounded-2xl border border-dashed border-border text-xs font-bold text-muted-foreground hover:bg-muted/30 transition-all flex items-center justify-center gap-2">
                     <UserPlus size={14} />
-                    ?덈줈??梨뚮┛吏� 洹몃９ 留뚮뱾湲?
+                    새로운 챌린지 그룹 만들기
                 </button>
             </div>
         );
@@ -337,7 +328,7 @@ export default function GroupChallengeView({ user, streak, progress }: GroupChal
                                 if (groupId) {
                                     const text = `[성경 365] 함께 읽기에 초대합니다! 🙌\n\n초대 코드: ${groupId}\n\n앱에서 코드를 입력하고 참여해보세요.`;
                                     navigator.clipboard.writeText(text);
-                                    alert("??珥덈? 硫붿떆吏�媛� 蹂듭궗?섏뿀?듬땲??");
+                                    alert("초대 메시지가 복사되었습니다");
                                 }
                             }}
                             className="text-[10px] text-muted-foreground hover:text-primary transition-colors text-left flex items-center gap-1"
@@ -350,8 +341,6 @@ export default function GroupChallengeView({ user, streak, progress }: GroupChal
                 <div className="flex items-center gap-2">
                     <button
                         onClick={async () => {
-                            // Import dynamically to avoid SSR issues if needed, or use global
-                            // Using the share-service function
                             const { encryptInviteCode } = await import("@/lib/crypto");
                             const encryptedCode = encryptInviteCode(groupId);
 
@@ -415,7 +404,7 @@ export default function GroupChallengeView({ user, streak, progress }: GroupChal
                         </div>
                     )) : (
                         <div className="w-full text-center py-4 text-xs text-muted-foreground">
-                            ?꾩쭅 硫ㅻ쾭媛� ?놁뒿?덈떎. 移쒓뎄瑜?珥덈??대낫?몄슂!
+                            아직 멤버가 없습니다. 친구를 초대해보세요!
                         </div>
                     )}
                     <div className="w-px h-10 bg-border/50" />
@@ -462,7 +451,7 @@ export default function GroupChallengeView({ user, streak, progress }: GroupChal
                     <div className="flex items-center gap-2">
                         <input
                             type="text"
-                            placeholder="硫붿떆吏� ?낅젰..."
+                            placeholder="메시지 입력..."
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
@@ -482,7 +471,7 @@ export default function GroupChallengeView({ user, streak, progress }: GroupChal
             {/* Live Status */}
             <div className="flex items-center gap-2 px-2 text-[10px] text-muted-foreground font-bold italic">
                 <Zap size={10} className={cn("transition-colors", isConnected ? "text-green-500 animate-pulse" : "text-muted-foreground")} />
-                <span>{isConnected ? "?ㅼ떆媛꾩쑝濡??ㅻⅨ 吏�泥대뱾怨??곌껐?섏뼱 ?덉뒿?덈떎" : "?곌껐 以묒엯?덈떎..."}</span>
+                <span>{isConnected ? "실시간으로 다른 지체들과 연결되어 있습니다" : "연결 중입니다..."}</span>
             </div>
 
             {/* Poke Notification Overlay */}

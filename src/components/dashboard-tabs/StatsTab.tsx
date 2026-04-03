@@ -75,8 +75,6 @@ export default function StatsTab({ completedPlanIds, allPlans, onBack }: StatsTa
             <div className="flex-1 overflow-y-auto pb-32">
                 {/* Hero Tree Visual */}
                 <div className="relative w-full h-[320px] bg-gradient-to-b from-blue-50/50 to-emerald-50/50 dark:from-blue-950/20 dark:to-emerald-950/20 overflow-hidden border-b border-border/50 shadow-sm flex flex-col justify-end pb-4 pt-10">
-
-                    {/* Background decorations for depth */}
                     <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-300/20 rounded-full blur-3xl blend-screen" />
                     <div className="absolute top-20 right-10 w-40 h-40 bg-emerald-400/10 rounded-full blur-3xl blend-screen" />
 
@@ -110,7 +108,7 @@ export default function StatsTab({ completedPlanIds, allPlans, onBack }: StatsTa
                     </div>
                 </div>
 
-                {/* ?�?쒖쓽 諛쒖옄痍?(Insight Timeline) */}
+                {/* 영성의 발자취 (Insight Timeline) */}
                 <div className="px-5 mt-10">
                     <h3 className="text-lg font-bold font-serif mb-5 flex items-center gap-2">
                         <Sparkles className="w-5 h-5 text-amber-500 ml-1" />
@@ -158,62 +156,48 @@ function InsightCard({ icon, title, value, desc }: any) {
 }
 
 function SpiritualTree({ stage }: { stage: number }) {
-    // Dynamic, animated SVG Tree visual
     return (
         <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl" strokeLinejoin="round" strokeLinecap="round">
-            {/* Ground line */}
             <path d="M 20 180 Q 100 170 180 180" stroke="#a3e635" strokeWidth="3" fill="none" opacity="0.4" strokeDasharray="5, 5" />
-
             {stage === 0 && (
                 <circle cx="100" cy="175" r="5" fill="#84cc16" className="animate-pulse shadow-xl" />
             )}
-
             {stage >= 1 && (
                 <>
                     <path d="M 100 180 Q 95 160 100 150" stroke="#65a30d" strokeWidth="6" fill="none" />
-                    <path d="M 100 165 C 80 160 85 145 100 150 C 115 145 120 160 100 165" fill="#a3e635" opacity={stage >= 1 ? 1 : 0} />
+                    <path d="M 100 165 C 80 160 85 145 100 150 C 115 145 120 160 100 165" fill="#a3e635" />
                 </>
             )}
-
             {stage >= 2 && (
                 <>
                     <path d="M 100 180 Q 90 120 100 90" stroke="#4d7c0f" strokeWidth="8" fill="none" />
                     <path d="M 98 130 Q 70 110 80 90" stroke="#4d7c0f" strokeWidth="5" fill="none" />
                     <path d="M 102 140 Q 130 120 120 100" stroke="#4d7c0f" strokeWidth="5" fill="none" />
-                    {/* Canopy bubbles */}
                     <circle cx="80" cy="90" r="18" fill="#65a30d" opacity="0.95" />
                     <circle cx="120" cy="100" r="16" fill="#65a30d" opacity="0.95" />
                     <circle cx="100" cy="80" r="24" fill="#a3e635" opacity="1" />
                 </>
             )}
-
             {stage >= 3 && (
                 <>
                     <path d="M 95 180 Q 80 80 100 50" stroke="#3f6212" strokeWidth="16" fill="none" />
                     <path d="M 92 120 Q 50 90 60 60" stroke="#3f6212" strokeWidth="8" fill="none" />
                     <path d="M 105 130 Q 150 100 140 70" stroke="#3f6212" strokeWidth="8" fill="none" />
-
-                    {/* Big Leaves */}
                     <circle cx="60" cy="60" r="30" fill="#4d7c0f" opacity="0.9" />
                     <circle cx="140" cy="70" r="28" fill="#4d7c0f" opacity="0.9" />
                     <circle cx="95" cy="45" r="42" fill="#65a30d" opacity="0.95" />
                     <circle cx="80" cy="30" r="24" fill="#a3e635" opacity="0.8" />
                     <circle cx="120" cy="40" r="30" fill="#84cc16" opacity="0.85" />
-
-                    {/* Glow */}
                     <circle cx="100" cy="40" r="60" fill="#d9f99d" opacity="0.1" className="animate-pulse" />
                 </>
             )}
-
             {stage >= 4 && (
                 <>
-                    {/* Fruit / Apples / Blessing Orbs */}
                     <circle cx="70" cy="50" r="5" fill="#f43f5e" />
                     <circle cx="130" cy="60" r="6" fill="#f43f5e" />
                     <circle cx="100" cy="25" r="5" fill="#f43f5e" />
                     <circle cx="110" cy="80" r="6" fill="#f43f5e" />
                     <circle cx="55" cy="80" r="5" fill="#f43f5e" />
-                    {/* Brighter Glow */}
                     <circle cx="100" cy="50" r="80" fill="#fef08a" opacity="0.15" />
                 </>
             )}

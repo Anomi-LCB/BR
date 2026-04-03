@@ -48,7 +48,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
     // Korean Spacing Algorithm
     const formatKoreanText = (text: string) => {
         if (!text) return text;
-        // ?대?/議곗궗 ???꾩뼱?곌린 媛뺤젣 ?쎌엯 (媛꾨떒 ?대━?ㅽ떛)
+        // 어미/조사 뒤 띄어쓰기 강제 삽입 (간단 휴리스틱)
         let formatted = text.replace(/(습니다|합니다|입니다|했습니다|은|는|이|가|을|를|에게|에서|로|으로)(?![\s.,!?])/g, '$1 ');
         return formatted.replace(/\s+/g, ' ').trim();
 
@@ -115,7 +115,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
 
     const toggleListening = async () => {
         if (!recognitionRef.current) {
-            alert("?대떦 湲곌린/釉뚮씪?곗????뚯꽦 ?몄떇??吏�?먰븯吏� ?딆뒿?덈떎.");
+            alert("해당 기기/브라우저에서는 음성 인식을 지원하지 않습니다.");
             return;
         }
         if (isListening) {
@@ -131,7 +131,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                 setIsListening(true);
             } catch (error) {
                 console.error("Microphone permission denied or error:", error);
-                alert("留덉씠???묎렐 沅뚰븳???꾩슂?⑸땲?? 湲곌린 ?ㅼ젙?먯꽌 沅뚰븳???덉슜?댁＜?몄슂.");
+                alert("마이크 접근 권한이 필요합니다. 기기 설정에서 권한을 허용해주세요.");
             }
         }
     };
@@ -157,10 +157,6 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
 
         let allVerses: BibleVerse[] = [];
         for (const ref of plan.verses) {
-            // Re-use logic: parse "李?1" or "李?1-2" correctly by the service
-            // Note: service expects specific formats but getChapterContent expects "李쎌꽭湲?1"
-            // To be entirely accurate, we might need a proper parser. 
-            // In our case, plan.verses has full names like "?щТ?섏긽 24"
             try {
                 const chapterData = await BibleService.getChapterContent(ref);
                 allVerses = [...allVerses, ...chapterData.verses];
@@ -197,7 +193,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
         }
 
         try {
-            const mockFeedback = "?ㅻ뒛??留먯? ?덉뿉??源딆? 臾듭긽???섎늻??二쇱뀛??媛먯궗?⑸땲?? 湲곕줉??怨좊갚?ㅼ씠 ?뱀떊???띠뿉 ?대ℓ濡?留블엳湲?異뺣났?⑸땲??";
+            const mockFeedback = "오늘의 말씀 안에서 깊은 묵상을 나누어 주셔서 감사합니다. 기록된 고백들이 당신의 삶에 열매로 맺히길 축복합니다.";
 
             const rhemaPayload = selectedRhema
                 ? `${selectedRhema.text} (${selectedRhema.book} ${selectedRhema.chapter}:${selectedRhema.verse})`
@@ -235,7 +231,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                         )}
                     >
                         <History size={14} />
-                        吏�??湲곕줉
+                        지난 기록
                     </button>
                     <button
                         onClick={() => setView('write')}
@@ -245,7 +241,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                         )}
                     >
                         <Plus size={16} />
-                        臾듭긽?섍린
+                        묵상하기
                     </button>
                 </div>
 
@@ -260,12 +256,12 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                                 <MessageSquareHeart size={16} className="text-white" />
                             </div>
                             <div className="text-left leading-tight">
-                                <h4 className="font-serif font-black text-xs">?섏쓽 ?곸쟻 ?쇰뱶</h4>
-                                <p className="text-[9px] font-bold text-white/80">?덈쭏 留먯?怨?臾듭긽 紐⑥븘蹂닿린</p>
+                                <h4 className="font-serif font-black text-xs">나의 영적 피드</h4>
+                                <p className="text-[9px] font-bold text-white/80">레마 말씀과 묵상 모아보기</p>
                             </div>
                         </div>
                         <div className="bg-white/20 px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest flex items-center gap-1 backdrop-blur-md border border-white/10">
-                            ?닿린 <ChevronRight size={10} />
+                            열기 <ChevronRight size={10} />
                         </div>
                     </button>
                 )}
@@ -276,7 +272,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                     <SmartCard variant="elevated" className="bg-card border-primary/10 overflow-visible">
                         <div className="p-6 space-y-4">
                             <div className="flex flex-col gap-2 pb-2">
-                                <h3 className="text-lg font-serif font-black">{plan?.title || '?ㅻ뒛??留먯?'}</h3>
+                                <h3 className="text-lg font-serif font-black">{plan?.title || '오늘의 말씀'}</h3>
                                 {plan && (
                                     <button
                                         onClick={() => setShowRhemaPicker(true)}
@@ -319,7 +315,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                                 <textarea
                                     value={content}
                                     onChange={(e) => setContent(e.target.value)}
-                                    placeholder={isListening ? "?ｊ퀬 ?덉뒿?덈떎... 臾듭긽???명븯寃?留먯??댁＜?몄슂." : "蹂몃Ц???듯빐 ?먮? ?먯씠???띠뿉 ?곸슜???댁슜???먯쑀濡?쾶 湲곕줉?대낫?몄슂..."}
+                                    placeholder={isListening ? "듣고 있습니다... 묵상을 편하게 말씀해주세요." : "본문을 통해 얻은 인사이트나 삶에 적용할 내용을 자유롭게 기록해보세요..."}
                                     className="w-full min-h-[200px] bg-transparent border-none outline-none text-sm leading-relaxed resize-none font-medium placeholder:text-muted-foreground/40 z-10 relative"
                                 />
                                 {interimText && (
@@ -336,7 +332,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                                         onClick={applyVoiceText}
                                         className="w-full flex flex-row items-center justify-center gap-2 h-10 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 font-bold text-xs transition-colors"
                                     >
-                                        <Mic size={14} /> ?띿뒪??蹂�?섑븯湲?
+                                        <Mic size={14} /> 텍스트 변환하기
                                     </button>
                                 )}
                                 <div className="flex flex-row items-center justify-center gap-2 pt-2">
@@ -348,7 +344,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                                                 ? "bg-red-500 text-white animate-pulse shadow-red-500/30"
                                                 : "bg-rose-100 text-rose-600 dark:bg-rose-900/40 dark:text-rose-400 hover:bg-rose-200"
                                         )}
-                                        title="?뚯꽦?쇰줈 ?깅줉?섍린"
+                                        title="음성으로 등록하기"
                                     >
                                         <Mic size={20} />
                                     </button>
@@ -357,7 +353,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                                         disabled={(!content.trim() && !interimText.trim()) || isAnalyzing}
                                         className="flex-1 h-12 rounded-2xl bg-primary text-primary-foreground text-sm font-black shadow-lg shadow-primary/20 disabled:opacity-50 flex items-center justify-center gap-2 transition-all active:scale-95 px-4"
                                     >
-                                        {isAnalyzing ? "AI 遺꾩꽍 以?.." : "湲곕줉 ?꾨즺"}
+                                        {isAnalyzing ? "AI 분석 중..." : "기록 완료"}
                                         {!isAnalyzing && <Send size={16} />}
                                     </button>
                                 </div>
@@ -367,7 +363,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
 
                     <div className="px-2">
                         <p className="text-[10px] text-muted-foreground/60 italic leading-relaxed">
-                            &quot;?ы샇?�???⑤쾿??利먭굅?뚰븯??洹몄쓽 ?⑤쾿??二쇱빞濡?臾듭긽?섎뒗?꾨떎&quot; (?쒗렪 1:2)
+                            &quot;여호와의 율법을 즐거워하며 그의 율법을 주야로 묵상하는도다&quot; (시편 1:2)
                         </p>
                     </div>
 
@@ -378,8 +374,8 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                             <div className="relative bg-background rounded-t-[2rem] w-full h-[75vh] flex flex-col p-6 animate-in slide-in-from-bottom-full duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
                                 <div className="flex justify-between items-center mb-6">
                                     <div>
-                                        <h3 className="text-xl font-black font-serif text-primary">?섏쓽 ?덈쭏 (Rhema)</h3>
-                                        <p className="text-xs font-bold text-muted-foreground mt-1">?ㅻ뒛 ?쎌? 蹂몃Ц 以?留덉쓬???⑤뒗 援ъ젅??怨좊Ⅴ?몄슂</p>
+                                        <h3 className="text-xl font-black font-serif text-primary">나의 레마 (Rhema)</h3>
+                                        <p className="text-xs font-bold text-muted-foreground mt-1">오늘 읽은 본문 중 마음에 남는 구절을 고르세요</p>
                                     </div>
                                     <button onClick={() => setShowRhemaPicker(false)} className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center transition-colors active:scale-90">
                                         <X size={16} />
@@ -390,7 +386,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                                     {planVerses.length === 0 ? (
                                         <div className="h-full flex flex-col items-center justify-center space-y-4">
                                             <div className="w-8 h-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
-                                            <p className="text-sm font-bold text-muted-foreground animate-pulse">蹂몃Ц??遺덈윭?ㅻ뒗 以묒엯?덈떎...</p>
+                                            <p className="text-sm font-bold text-muted-foreground animate-pulse">본문을 불러오는 중입니다...</p>
                                         </div>
                                     ) : (
                                         planVerses.map((v, i) => (
@@ -420,7 +416,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                     {journals.length === 0 ? (
                         <div className="py-20 text-center space-y-3 opacity-30">
                             <PenLine size={40} className="mx-auto" />
-                            <p className="text-sm font-bold">?꾩쭅 湲곕줉??臾듭긽???놁뒿?덈떎.<br />泥?臾듭긽???④꺼蹂댁꽭??</p>
+                            <p className="text-sm font-bold">아직 기록된 묵상이 없습니다.<br />첫 묵상을 남겨보세요.</p>
                         </div>
                     ) : (
                         journals.map((journal) => (
@@ -431,16 +427,15 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                                             <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">
                                                 {new Date(journal.created_at).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}
                                             </p>
-                                            <h4 className="text-sm font-black">{!journal.plan_id ? '?먯쑀 臾듭긽' : (plan ? `${BibleService.getAbbreviatedTitle(plan.verses)} 臾듭긽` : `臾듭긽 湲곕줉 ${journal.plan_id}`)}</h4>
+                                            <h4 className="text-sm font-black">{!journal.plan_id ? '자유 묵상' : (plan ? `${BibleService.getAbbreviatedTitle(plan.verses)} 묵상` : `묵상 기록 ${journal.plan_id}`)}</h4>
                                         </div>
                                         <button
                                             onClick={() => {
-                                                // TODO: Implement real edit mode
                                                 setContent(journal.content);
                                                 setView('write');
                                             }}
                                             className="text-muted-foreground hover:text-primary transition-colors p-1 bg-muted/30 rounded-full"
-                                            title="?몄쭛?쇰줈 遺덈윭?ㅺ린"
+                                            title="편집으로 불러오기"
                                         >
                                             <PenLine size={14} />
                                         </button>
@@ -453,7 +448,7 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                                                 &quot;{journal.rhema_verse.split('(')[0].trim()}&quot;
                                             </p>
                                             <p className="text-[10px] font-black text-primary mt-2">
-                                                - {journal.rhema_verse.match(/\((.*?)\)/)?.[1] || "留먯?"}
+                                                - {journal.rhema_verse.match(/\((.*?)\)/)?.[1] || "말씀"}
                                             </p>
                                         </div>
                                     )}
@@ -468,13 +463,11 @@ export default function JournalView({ plan, defaultView = 'write' }: JournalView
                 </div>
             )}
 
-            {/* Bottom Section Removed, moved to Top Sticky Navbar */}
-
             {/* Simple Toast Notification */}
             {showToast && (
                 <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-foreground/90 text-background px-4 py-2 rounded-full text-xs font-bold shadow-lg animate-in slide-in-from-bottom-5 fade-in duration-300 z-50 flex items-center gap-2">
                     <Check size={14} />
-                    臾듭긽 湲곕줉???�?λ릺?덉뒿?덈떎
+                    묵상 기록이 저장되었습니다
                 </div>
             )}
 

@@ -13,12 +13,12 @@ interface ReflectionModalProps {
 }
 
 const QUESTIONS = [
-    "?ㅻ뒛 ?쎌? 留먯? 以?留덉쓬???�?우? ??援ъ젅?� 臾댁뾿?멸???",
-    "?ㅻ뒛 蹂몃Ц???쎌쑝硫??덈∼寃?源⑤떖?� ?섎굹?섏쓽 ?깊뭹?� 臾댁뾿?멸???",
-    "??留먯????ㅻ뒛 ?섏쓽 ?띠뿉 ?대뼡 ?섎?瑜?二쇰굹??",
-    "留먯????쎌쑝硫??섏뿉寃?二쇱떊 ?꾨줈??沅뚮㈃???덈떎硫??곸뼱蹂댁꽭??",
-    "?ㅻ뒛 蹂몃Ц??鍮꾩텛??蹂??? ?닿? ?댁씪 ?ㅼ쿇?댁빞 ????媛�吏�??臾댁뾿?멸???",
-    "?쎌? 留먯? 以?媛�??湲곗뼲???⑤뒗 ?⑥뼱 ?섎굹?� 洹??댁쑀??臾댁뾿?멸???"
+    "오늘 읽은 말씀 중 마음에 와닿은 한 구절은 무엇인가요?",
+    "오늘 본문을 읽으며 새롭게 깨달은 하나님의 성품은 무엇인가요?",
+    "이 말씀이 오늘 나의 삶에 어떤 의미를 주나요?",
+    "말씀을 읽으며 나에게 주신 위로나 권면이 있었다면 적어보세요.",
+    "오늘 본문에 비추어 보았을 때 내가 내일 실천해야 할 한 가지는 무엇인가요?",
+    "읽은 말씀 중 가장 기억에 남는 단어 하나와 그 이유는 무엇인가요?"
 ];
 
 export default function ReflectionModal({ planReferences, onComplete, onClose }: ReflectionModalProps) {
@@ -84,7 +84,7 @@ export default function ReflectionModal({ planReferences, onComplete, onClose }:
 
                 <div className="mb-4 pt-2">
                     <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full mb-3">
-                        ?꾨즺 梨뚮┛吏�
+                        완료 챌린지
                     </span>
                     <h3 className="text-lg font-bold leading-snug break-keep text-foreground mb-4">
                         {question}
@@ -94,7 +94,7 @@ export default function ReflectionModal({ planReferences, onComplete, onClose }:
                         onClick={() => setShowRhemaPicker(true)}
                         className="w-full flex flex-row items-center justify-center gap-1.5 px-3 py-3 rounded-xl bg-secondary text-secondary-foreground text-sm font-bold transition-all hover:opacity-80 active:scale-95 shadow-sm border border-border/40"
                     >
-                        <span className={selectedRhema ? "text-primary" : ""}>?뱷</span>
+                        <span className={selectedRhema ? "text-primary" : ""}>레마</span>
                         {selectedRhema ? '말씀 변경' : '말씀 태그'}
                     </button>
 
@@ -120,7 +120,7 @@ export default function ReflectionModal({ planReferences, onComplete, onClose }:
                     <textarea
                         value={answer}
                         onChange={(e) => setAnswer(e.target.value)}
-                        placeholder="吏㏐쾶 ??臾몄옣 ?뱀? ?⑥뼱濡??곸뼱蹂댁꽭??.."
+                        placeholder="짧게 한 문장 또는 단어로 적어보세요..."
                         className="w-full h-24 p-4 border rounded-2xl bg-muted/20 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none font-medium"
                         maxLength={100}
                     />
@@ -140,12 +140,12 @@ export default function ReflectionModal({ planReferences, onComplete, onClose }:
                         ) : (
                             <>
                                 <Check size={18} />
-                                湲곕줉?섍린
+                                기록하기
                             </>
                         )}
                     </button>
                     <p className="text-center text-[10px] text-muted-foreground font-medium">
-                        (5珥덈쭔 怨좊??대룄 留먯???留덉쓬??源딆씠 ?덇꺼吏묐땲??
+                        (5초만 고민해도 말씀이 마음에 깊이 남겨집니다)
                     </p>
                 </div>
             </div>
@@ -157,8 +157,8 @@ export default function ReflectionModal({ planReferences, onComplete, onClose }:
                     <div className="relative bg-background rounded-t-[2rem] w-full h-[75vh] flex flex-col p-6 animate-in slide-in-from-bottom-full duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
                         <div className="flex justify-between items-center mb-6">
                             <div>
-                                <h3 className="text-xl font-black font-serif text-primary">?섏쓽 ?덈쭏 (Rhema)</h3>
-                                <p className="text-xs font-bold text-muted-foreground mt-1">?ㅻ뒛 ?쎌? 蹂몃Ц 以?留덉쓬???⑤뒗 援ъ젅??怨좊Ⅴ?몄슂</p>
+                                <h3 className="text-xl font-black font-serif text-primary">나의 레마 (Rhema)</h3>
+                                <p className="text-xs font-bold text-muted-foreground mt-1">오늘 읽은 본문 중 마음에 남는 구절을 고르세요</p>
                             </div>
                             <button onClick={() => setShowRhemaPicker(false)} className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center transition-colors active:scale-90">
                                 <X size={16} />
@@ -169,7 +169,7 @@ export default function ReflectionModal({ planReferences, onComplete, onClose }:
                             {planVerses.length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center space-y-4">
                                     <div className="w-8 h-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
-                                    <p className="text-sm font-bold text-muted-foreground animate-pulse">蹂몃Ц??遺덈윭?ㅻ뒗 以묒엯?덈떎...</p>
+                                    <p className="text-sm font-bold text-muted-foreground animate-pulse">본문을 불러오는 중입니다...</p>
                                 </div>
                             ) : (
                                 planVerses.map((v, i) => (

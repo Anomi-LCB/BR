@@ -10,13 +10,13 @@ export default function ThemeEngine() {
 
         // Handle Theme
         root.classList.remove('theme-midnight-forest');
-        if (activeTheme === "?뚮쭏 'Midnight Forest'") {
+        if (activeTheme === "테마 'Midnight Forest'") {
             root.classList.add('theme-midnight-forest');
         }
 
         // Handle Font
         root.classList.remove('font-myeongjo');
-        if (activeFont === "?꾨━誘몄뾼 ?고듃 '紐낆“'") {
+        if (activeFont === "프리미엄 폰트 '명조'") {
             root.classList.add('font-myeongjo');
         }
     }, [activeTheme, activeFont]);

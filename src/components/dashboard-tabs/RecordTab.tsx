@@ -42,7 +42,7 @@ export default function RecordTab({ completedVerses, completedPlanIds, allPlans,
                     )}
                 >
                     <BookOpen size={13} />
-                    ?깃꼍 ?ъ젙
+                    성경 여정
                 </button>
                 <button
                     onClick={() => setSubTab('calendar')}
@@ -54,7 +54,7 @@ export default function RecordTab({ completedVerses, completedPlanIds, allPlans,
                     )}
                 >
                     <Calendar size={13} />
-                    ?좎쭨 ?ъ젙
+                    날짜 여정
                 </button>
             </div>
 
