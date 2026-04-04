@@ -38,29 +38,19 @@ export function parseDurationToMinutes(duration: string): number {
     return totalMinutes || 1; // 최소 1분
 }
 
+import { YOUTUBE_DAY_TO_INDEX } from './youtubeLinks';
+
 /**
  * ★ 핵심 매핑 함수: 읽기 일차(Day) → 재생목록 인덱스(0-based)
  * 
- * 재생목록 구조:
- * - Day 1~245   → index 0~244 (순서대로)
- * - Day 246     → 누락 (영상 없음)
- * - Day 247~354 → index 245~352 (1씩 당겨짐)
- * - Day 355     → index 363 (맨 마지막에 업로드됨)
- * - Day 356~365 → index 353~362 (2씩 당겨짐)
+ * 복잡한 알고리즘을 사용하지 않고, youtube link.txt에서 파싱한
+ * 1:1 매핑 하드코딩 테이블(youtubeLinks.ts)을 직접 조회하여 반환합니다.
  */
 function dayToPlaylistIndex(day: number): number | null {
     if (day < 1 || day > 365) return null;
-    if (day === 246) return null; // 누락된 날
-
-    if (day <= 245) {
-        return day - 1;            // Day 1→0, Day 245→244
-    } else if (day <= 354) {
-        return day - 2;            // Day 247→245, Day 354→352
-    } else if (day === 355) {
-        return 363;                // 맨 마지막 위치
-    } else {
-        return day - 3;            // Day 356→353, Day 365→362
-    }
+    
+    const index = YOUTUBE_DAY_TO_INDEX[day];
+    return index !== undefined ? index : null;
 }
 
 /**
@@ -71,8 +61,8 @@ export function getDirectEmbedUrl(dayOfYear: number): string | null {
     const index = dayToPlaylistIndex(dayOfYear);
     if (index === null) return null;
 
-    // YouTube embed에서 playlist + index 사용 (index는 1-based)
-    return `https://www.youtube.com/embed/videoseries?list=${PLAYLIST_ID}&index=${index + 1}&rel=0&modestbranding=1&playsinline=1`;
+    // YouTube embed에서 하드코딩된 index를 그대로 사용합니다.
+    return `https://www.youtube.com/embed/videoseries?list=${PLAYLIST_ID}&index=${index}&rel=0&modestbranding=1&playsinline=1`;
 }
 
 /**
@@ -82,7 +72,7 @@ export function getYoutubeWatchUrl(dayOfYear: number): string | null {
     const index = dayToPlaylistIndex(dayOfYear);
     if (index === null) return null;
 
-    return `https://www.youtube.com/watch?list=${PLAYLIST_ID}&index=${index + 1}`;
+    return `https://www.youtube.com/watch?list=${PLAYLIST_ID}&index=${index}`;
 }
 
 /**
