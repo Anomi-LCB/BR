@@ -25,21 +25,7 @@ export default function PWAInstallBanner() {
     const [platform, setPlatform] = useState<Platform>("desktop");
 
     useEffect(() => {
-        // 이미 설치된 상태(standalone)면 숨김
-        if (window.matchMedia("(display-mode: standalone)").matches) {
-            setIsInstalled(true);
-            return;
-        }
-
         setPlatform(detectPlatform());
-
-        // 사용자가 닫은 시간 확인 → 24시간 이내면 숨김
-        const dismissedAt = localStorage.getItem(DISMISS_KEY);
-        if (dismissedAt && Date.now() - parseInt(dismissedAt) < DISMISS_DURATION) {
-            return; // 24시간 안 지남 → 숨기기
-        }
-
-        // ★ beforeinstallprompt 없어도 일단 표시
         setIsVisible(true);
 
         const handleBeforeInstallPrompt = (e: Event) => {
@@ -49,7 +35,6 @@ export default function PWAInstallBanner() {
 
         const handleAppInstalled = () => {
             setIsInstalled(true);
-            setIsVisible(false);
             setDeferredPrompt(null);
         };
 
@@ -79,10 +64,9 @@ export default function PWAInstallBanner() {
 
     const handleDismiss = () => {
         setIsVisible(false);
-        localStorage.setItem(DISMISS_KEY, String(Date.now()));
     };
 
-    if (isInstalled || !isVisible) return null;
+    if (!isVisible) return null;
 
     return (
         <div className="px-5 pt-4 pb-2 animate-in fade-in slide-in-from-top-4 duration-700">
