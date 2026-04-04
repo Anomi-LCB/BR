@@ -10,3 +10,4 @@
 - [2026-04-03 빌드 성공 및 오류 회피] Turbopack 경로 인식 버그(한글 경로 패닉)를 `--webpack` 플래그로 우회하여 production 빌드 성공. 정적 사이트 내보내기(`output: export`)를 위해 모든 API 경로에 `force-static` 설정 완료.
 - [2026-04-03 유튜브 영상 오류 수정] 93일차 영상이 포함된 플레이리스트 제목('일차' 형식) 파싱 로직 개선 및 인덱스 기반 검색을 `dayNumber` 기반으로 고도화하여 영상 매칭 정확도 향상.
 - [2026-04-03 PWA 및 매일 알람 시스템 구현] `manifest.json`, `sw.js` 고도화, Web Push(VAPID) 구독 로직 및 Supabase 연동, iOS 전용 설치 가이드 모달 추가 완료.
+- [2026-04-03 푸시 알림 서버리스 구축] 매일 정해진 시간에 구독자 대상 웹 푸시를 발송하는 Supabase Edge Function (`daily-bible-push`) 및 DB 스키마 추가, 프론트엔드 연동 로직(`notification-service`) 및 환경변수(VAPID) 설정 완료.

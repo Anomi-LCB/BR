@@ -210,7 +210,7 @@ export async function syncWebPushSubscription(settings: NotificationSettings): P
             .from('push_subscriptions')
             .upsert({
                 endpoint: subscription.endpoint,
-                subscription_json: JSON.stringify(subscription),
+                subscription_json: JSON.parse(JSON.stringify(subscription)),
                 alarm_time: `${String(settings.hour).padStart(2, '0')}:${String(settings.minute).padStart(2, '0')}:00`,
                 user_id: user?.id || null,
                 updated_at: new Date().toISOString()
