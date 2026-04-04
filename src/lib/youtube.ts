@@ -12,7 +12,7 @@ export interface YoutubeVideo {
 // ★ 원본 365일 읽기 재생목록 (364개 영상, 246일차 누락)
 const PLAYLIST_ID = 'PLVcVykBcFZTR4Q6cvmybjPgCklZlv-Ghj';
 const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
-const CACHE_KEY = 'youtube_bible_reading_cache';
+const CACHE_KEY = 'youtube_bible_reading_cache_v2';
 const CACHE_EXPIRY = 7 * 24 * 60 * 60 * 1000; // 7일
 
 /**

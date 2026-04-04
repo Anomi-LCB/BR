@@ -14,7 +14,7 @@ function detectPlatform(): Platform {
     return "desktop";
 }
 
-const DISMISS_KEY = "pwa_banner_dismissed_at";
+const DISMISS_KEY = "pwa_banner_dismissed_at_v2";
 const DISMISS_DURATION = 24 * 60 * 60 * 1000; // 24시간 후 다시 표시
 
 export default function PWAInstallBanner() {
