@@ -16,7 +16,7 @@ export default function ChurchLogo() {
                         className="relative flex items-center justify-center group cursor-pointer"
                     >
                         <img
-                            src="/logo-final.png?v=11"
+                            src="/BR/logo-final.png?v=11"
                             alt="사랑의교회"
                             className="h-11 w-auto object-contain transition-opacity group-hover:opacity-80 drop-shadow-sm"
                             style={{

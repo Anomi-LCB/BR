@@ -1,5 +1,11 @@
 # Progress
 
+## 완료된 기능
+- [2026-04-05] GitHub Pages 하위 경로(/BR/) 배포 최적화
+- [2026-04-05] PWA 404 에러 해결 (manifest, sw.js 경로 수정)
+- [2026-04-05] 실시간 날짜 동기화 (Client-side Date Hydration)
+- [2026-04-05] GitHub Actions Node.js 24 환경 최적화
+
 - [2026-04-03 성경 본문 데이터화] PDF에서 성경 구절 추출 후 `public/data/bible-krv.json` 구축 완료 (오프라인 모드).
 - [2026-04-03 UI/UX 개선] Premium 아이콘 제거, 불필요한 위젯 제거, 네비게이션 도크 스크롤 숨김 로직 제거 (하단 고정).
 - [2026-04-03 성경 뷰어 연동] `BibleDashboard.tsx`의 성경 검색 탭(`BibleSearchTab`)과 투데이 홈 탭의 성경 읽기 카드(`BibleCard`)에서 실제 성경 본문 뷰어(`FullReadingView.tsx`)가 뜨도록 `alert` 모의 로직을 제거하고 정상 연동 완료.

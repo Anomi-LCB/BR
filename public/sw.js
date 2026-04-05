@@ -1,9 +1,9 @@
-const CACHE_NAME = 'bible-365-v2';
+const CACHE_NAME = 'bible-365-v3';
 const ASSETS = [
-  '/',
-  '/manifest.json',
-  '/logo-final.png',
-  '/favicon.ico'
+  '/BR/',
+  '/BR/manifest.json',
+  '/BR/logo-final.png',
+  '/BR/favicon.ico'
 ];
 
 self.addEventListener('install', (event) => {
@@ -67,11 +67,11 @@ self.addEventListener('push', (event) => {
     const data = event.data.json();
     const options = {
       body: data.body || '오늘의 성경 말씀을 확인해보세요.',
-      icon: '/logo-final.png',
-      badge: '/logo-final.png',
+      icon: '/BR/logo-final.png',
+      badge: '/BR/logo-final.png',
       vibrate: [100, 50, 100],
       data: {
-        url: data.url || '/'
+        url: data.url || '/BR/'
       }
     };
 
@@ -85,7 +85,7 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const urlToOpen = event.notification.data.url || '/';
+  const urlToOpen = event.notification.data.url || '/BR/';
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {

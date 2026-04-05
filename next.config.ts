@@ -7,6 +7,8 @@ const bundleAnalyzer = withBundleAnalyzer({
 
 const nextConfig: NextConfig = {
   output: 'export',
+  basePath: '/BR',
+  assetPrefix: '/BR',
   images: {
     unoptimized: true,
     remotePatterns: [

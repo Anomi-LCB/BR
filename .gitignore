@@ -68,3 +68,6 @@ test-parse.js
 
 # data temp
 scripts/tmp_hymnal*/
+
+# Local Netlify folder
+.netlify

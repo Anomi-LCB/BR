@@ -9,7 +9,7 @@ export default function ClientProviders({ children }: { children: React.ReactNod
         if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
             window.addEventListener("load", () => {
                 navigator.serviceWorker
-                    .register("/sw.js")
+                    .register("/BR/sw.js")
                     .then((registration) => {
                         console.log("SW registered: ", registration);
                     })

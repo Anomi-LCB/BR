@@ -192,8 +192,16 @@ export default function BibleDashboard({
     // Sync with URL and Load Local Data
     useEffect(() => {
         const dateFromUrl = searchParams.get("date");
-        if (dateFromUrl && dateFromUrl !== selectedDate) {
-            setSelectedDate(dateFromUrl);
+        if (dateFromUrl) {
+            if (dateFromUrl !== selectedDate) {
+                setSelectedDate(dateFromUrl);
+            }
+        } else {
+            // If no date in URL, ensure we use the actual client-side "Today" in KST
+            const todayKST = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
+            if (todayKST !== selectedDate) {
+                setSelectedDate(todayKST);
+            }
         }
 
         if (isGuest) {
@@ -230,7 +238,7 @@ export default function BibleDashboard({
                     setVideoDuration(null);
                 }
             } catch (error) {
-                console.error("Failed to fetch video duration", error);
+                // Ignore silent errors during SSR/initial render
             }
         }
         fetchDuration();
