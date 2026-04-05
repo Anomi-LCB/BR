@@ -22,7 +22,7 @@ const fontBody = Geist({
 export const metadata: Metadata = {
   title: "성경 365 - Divine Light",
   description: "Premium Bible Reading Experience",
-  manifest: "/manifest.json",
+  manifest: "/BR/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -32,8 +32,8 @@ export const metadata: Metadata = {
     telephone: false,
   },
   icons: {
-    icon: "/favicon.ico",
-    apple: "/logo-final.png",
+    icon: "/BR/favicon.ico",
+    apple: "/BR/logo-final.png",
   },
 };
 

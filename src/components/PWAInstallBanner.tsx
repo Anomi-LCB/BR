@@ -19,14 +19,23 @@ const DISMISS_DURATION = 24 * 60 * 60 * 1000; // 24시간 후 다시 표시
 
 export default function PWAInstallBanner() {
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-    const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
     const [isInstalled, setIsInstalled] = useState(false);
     const [showGuide, setShowGuide] = useState(false);
     const [platform, setPlatform] = useState<Platform>("desktop");
 
     useEffect(() => {
         setPlatform(detectPlatform());
-        setIsVisible(true);
+
+        // 이미 설치되어 있는지 확인
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
+                          || (navigator as any).standalone 
+                          || false;
+        
+        if (isStandalone) {
+            setIsVisible(false);
+            setIsInstalled(true);
+        }
 
         const handleBeforeInstallPrompt = (e: Event) => {
             e.preventDefault();
