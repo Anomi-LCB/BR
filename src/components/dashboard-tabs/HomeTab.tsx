@@ -10,7 +10,6 @@ import DateNavigator from "../DateNavigator";
 import BibleCard from "../BibleCard";
 import { EncouragementBanner } from "../EncouragementBanner";
 import { BibleReadingPlan } from "@/types/bible";
-import { BibleReadingPlan } from "@/types/bible";
 
 const YoutubePlayer = dynamic(() => import("../YoutubePlayer"), {
     loading: () => <div className="h-48 w-full bg-muted/20 animate-pulse rounded-3xl" />,
@@ -63,13 +62,13 @@ export default function HomeTab({
                 "fixed inset-0 pointer-events-none transition-opacity duration-1000 z-0",
                 isFocused ? "opacity-100" : "opacity-30"
             )}>
-                <div className="absolute top-[-10%] left-[-10%] w-[70vw] h-[70vw] rounded-full bg-blue-400/20 max-w-[500px] max-h-[500px] blur-[80px] mix-blend-multiply dark:mix-blend-screen transition-all duration-[3s] animate-pulse" />
-                <div className="absolute top-[20%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-emerald-400/20 max-w-[400px] max-h-[400px] blur-[80px] mix-blend-multiply dark:mix-blend-screen transition-all duration-[4s] animate-pulse delay-75" />
-                <div className="absolute bottom-[-10%] left-[20%] w-[80vw] h-[80vw] rounded-full bg-purple-400/20 max-w-[600px] max-h-[600px] blur-[100px] mix-blend-multiply dark:mix-blend-screen transition-all duration-[5s] animate-pulse delay-150" />
+                <div className="absolute top-[-10%] left-[-10%] w-[70vw] h-[70vw] rounded-full bg-blue-400/20 max-w-[500px] max-h-[500px] blur-[80px] mix-blend-multiply dark:mix-blend-screen transition-all duration-&lsqb;3s&rsqb; animate-pulse" />
+                <div className="absolute top-[20%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-emerald-400/20 max-w-[400px] max-h-[400px] blur-[80px] mix-blend-multiply dark:mix-blend-screen transition-all duration-&lsqb;4s&rsqb; animate-pulse delay-75" />
+                <div className="absolute bottom-[-10%] left-[20%] w-[80vw] h-[80vw] rounded-full bg-purple-400/20 max-w-[600px] max-h-[600px] blur-[100px] mix-blend-multiply dark:mix-blend-screen transition-all duration-&lsqb;5s&rsqb; animate-pulse delay-150" />
             </div>
 
             <div className={cn(
-                "relative z-10 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]",
+                "relative z-10 transition-all duration-700 ease-&lsqb;cubic-bezier(0.23,1,0.32,1)&rsqb;",
                 isFocused ? "-translate-y-2 lg:-translate-y-6" : ""
             )}>
                 {/* Absolute Backdrop for Focus Mode to hide GridCell content behind BibleCard */}
