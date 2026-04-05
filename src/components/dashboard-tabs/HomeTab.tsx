@@ -10,7 +10,7 @@ import DateNavigator from "../DateNavigator";
 import BibleCard from "../BibleCard";
 import { EncouragementBanner } from "../EncouragementBanner";
 import { BibleReadingPlan } from "@/types/bible";
-import PWAInstallBanner from "../PWAInstallBanner";
+import { BibleReadingPlan } from "@/types/bible";
 
 const YoutubePlayer = dynamic(() => import("../YoutubePlayer"), {
     loading: () => <div className="h-48 w-full bg-muted/20 animate-pulse rounded-3xl" />,
@@ -81,10 +81,6 @@ export default function HomeTab({
                 )}
 
                 <DashboardGrid>
-                    {/* Add PWA Install Banner at the very top */}
-                    <GridCell span="3" className={cn("transition-all duration-500", isFocused ? "opacity-0 h-0 overflow-hidden mb-0" : "opacity-100 mb-2")}>
-                        <PWAInstallBanner />
-                    </GridCell>
 
                     {/* Date Navigation */}
                     <GridCell span="3" className={cn("transition-all duration-500", isFocused ? "opacity-0 h-0 overflow-hidden mb-0" : "opacity-100 mb-2")}>

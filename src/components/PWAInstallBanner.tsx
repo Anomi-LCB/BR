@@ -21,7 +21,7 @@ export default function PWAInstallBanner() {
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
     const [isVisible, setIsVisible] = useState(true);
     const [isInstalled, setIsInstalled] = useState(false);
-    const [showGuide, setShowGuide] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const [platform, setPlatform] = useState<Platform>("desktop");
 
     useEffect(() => {
@@ -37,7 +37,7 @@ export default function PWAInstallBanner() {
             setIsInstalled(true);
         }
 
-        const handleBeforeInstallPrompt = (e: Event) => {
+        const handleBeforeInstallPromp = (e: Event) => {
             e.preventDefault();
             setDeferredPrompt(e);
         };
@@ -45,149 +45,155 @@ export default function PWAInstallBanner() {
         const handleAppInstalled = () => {
             setIsInstalled(true);
             setDeferredPrompt(null);
+            setIsVisible(false);
         };
 
-        window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+        window.addEventListener("beforeinstallprompt", handleBeforeInstallPromp);
         window.addEventListener("appinstalled", handleAppInstalled);
 
         return () => {
-            window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+            window.removeEventListener("beforeinstallprompt", handleBeforeInstallPromp);
             window.removeEventListener("appinstalled", handleAppInstalled);
         };
     }, []);
 
     const handleInstallClick = async () => {
         if (deferredPrompt) {
-            // 자동 설치 가능 → 바로 설치 프롬프트
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
             if (outcome === "accepted") {
                 setIsVisible(false);
+                setIsOpen(false);
             }
             setDeferredPrompt(null);
         } else {
-            // 자동 설치 불가 → 수동 설치 가이드 표시
-            setShowGuide(true);
+            // 설치 안내 팝업 유지
         }
     };
 
-    const handleDismiss = () => {
-        setIsVisible(false);
-    };
-
-    if (!isVisible) return null;
+    if (!isVisible || isInstalled) return null;
 
     return (
-        <div className="px-5 pt-4 pb-2 animate-in fade-in slide-in-from-top-4 duration-700">
-            <div className="relative overflow-hidden group">
-                {/* Premium Gradient Background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 opacity-90" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white/20 via-transparent to-transparent" />
-                <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
-                <div className="absolute -left-6 -bottom-6 w-32 h-32 bg-indigo-400/20 rounded-full blur-3xl opacity-50" />
-
-                <div className="relative p-5 flex flex-col gap-4 backdrop-blur-sm border border-white/10 rounded-[24px]">
-                    {/* Header */}
-                    <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-inner border border-white/20">
-                                <Download className="text-white w-6 h-6" />
-                            </div>
-                            <div>
-                                <h3 className="text-white font-bold text-lg leading-tight flex items-center gap-1.5">
-                                    성경 365 앱 설치 <Sparkles size={14} className="text-amber-300 fill-amber-300" />
-                                </h3>
-                                <p className="text-indigo-100/80 text-xs font-medium">
-                                    홈 화면에 추가하고 매일 알림을 받아보세요
-                                </p>
-                            </div>
-                        </div>
-                        <button
-                            onClick={handleDismiss}
-                            className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/60 hover:text-white"
-                        >
-                            <X size={18} />
-                        </button>
+        <>
+            {/* Floating Action Button - Always Visible on Web */}
+            <div className="fixed bottom-24 right-5 z-[100] animate-in fade-in zoom-in duration-500">
+                <button
+                    onClick={() => setIsOpen(true)}
+                    className="relative w-14 h-14 bg-gradient-to-br from-indigo-600 to-violet-700 rounded-full shadow-[0_8px_30px_rgb(79,70,229,0.4)] flex items-center justify-center group hover:scale-110 active:scale-95 transition-all border border-white/20 overflow-hidden"
+                >
+                    <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Download className="text-white w-6 h-6 group-hover:animate-bounce" />
+                    
+                    {/* Badge */}
+                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-amber-400 rounded-full flex items-center justify-center border-2 border-white animate-pulse">
+                        <Plus size={10} className="text-indigo-900 font-bold" />
                     </div>
-
-                    {/* 설치 가이드 (수동 설치 안내) */}
-                    {showGuide && (
-                        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 space-y-3 animate-in slide-in-from-top-2 duration-300 border border-white/10">
-                            {platform === "ios" ? (
-                                <>
-                                    <p className="text-white/90 text-xs font-bold">📱 iPhone / iPad 설치 방법</p>
-                                    <div className="space-y-2">
-                                        <div className="flex items-center gap-2 text-white/80 text-[11px]">
-                                            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold">1</div>
-                                            <span>하단의 <Share size={12} className="inline text-blue-300" /> <strong>공유</strong> 버튼을 탭</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-white/80 text-[11px]">
-                                            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold">2</div>
-                                            <span><Plus size={12} className="inline text-blue-300" /> <strong>홈 화면에 추가</strong>를 탭</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-white/80 text-[11px]">
-                                            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold">3</div>
-                                            <span>우측 상단 <strong>추가</strong>를 탭하면 완료!</span>
-                                        </div>
-                                    </div>
-                                </>
-                            ) : platform === "android" ? (
-                                <>
-                                    <p className="text-white/90 text-xs font-bold">📱 Android 설치 방법</p>
-                                    <div className="space-y-2">
-                                        <div className="flex items-center gap-2 text-white/80 text-[11px]">
-                                            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold">1</div>
-                                            <span>우측 상단 <MoreVertical size={12} className="inline text-blue-300" /> <strong>메뉴</strong>(⋮)를 탭</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-white/80 text-[11px]">
-                                            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold">2</div>
-                                            <span><strong>"앱 설치"</strong> 또는 <strong>"홈 화면에 추가"</strong>를 탭</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-white/80 text-[11px]">
-                                            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold">3</div>
-                                            <span><strong>설치</strong>를 탭하면 완료!</span>
-                                        </div>
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <p className="text-white/90 text-xs font-bold">💻 PC 브라우저 설치 방법</p>
-                                    <div className="space-y-2">
-                                        <div className="flex items-center gap-2 text-white/80 text-[11px]">
-                                            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold">1</div>
-                                            <span>주소창 오른쪽의 <Download size={12} className="inline text-blue-300" /> <strong>설치 아이콘</strong>을 클릭</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-white/80 text-[11px]">
-                                            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold">2</div>
-                                            <span><strong>설치</strong>를 클릭하면 완료!</span>
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Install Button */}
-                    <button
-                        onClick={handleInstallClick}
-                        className="w-full h-12 bg-white text-indigo-600 rounded-2xl font-bold text-sm shadow-lg shadow-indigo-900/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group/btn"
-                    >
-                        {deferredPrompt ? (
-                            <>
-                                지금 앱으로 설치하기
-                                <CheckCircle2 size={16} className="text-indigo-500 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
-                            </>
-                        ) : showGuide ? (
-                            "위 방법을 따라 설치해주세요 ✨"
-                        ) : (
-                            <>
-                                설치 방법 안내 보기
-                                <Download size={16} className="text-indigo-500" />
-                            </>
-                        )}
-                    </button>
-                </div>
+                </button>
             </div>
-        </div>
+
+            {/* Premium PWA Install Modal */}
+            {isOpen && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-5">
+                    <div 
+                        className="absolute inset-0 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300"
+                        onClick={() => setIsOpen(false)}
+                    />
+                    
+                    <div className="relative w-full max-w-sm bg-slate-900 border border-white/10 rounded-[32px] overflow-hidden shadow-2xl animate-in zoom-in-95 slide-in-from-bottom-10 duration-500">
+                        {/* Header Gradient */}
+                        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-indigo-600/30 to-transparent" />
+                        
+                        <div className="relative p-7 flex flex-col gap-6">
+                            <div className="flex justify-between items-start">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center shadow-inner">
+                                        <Download className="text-white w-7 h-7" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-white font-bold text-xl leading-tight">성경 365 앱 설치</h3>
+                                        <p className="text-slate-400 text-xs mt-1">홈 화면에 추가하고 매일 알림을 받으세요</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setIsOpen(false)}
+                                    className="p-2 hover:bg-white/10 rounded-xl transition-colors text-slate-400 hover:text-white"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            {/* Guide Section */}
+                            <div className="bg-white/5 rounded-2xl p-5 border border-white/5 space-y-4">
+                                {platform === "ios" ? (
+                                    <>
+                                        <p className="text-amber-400 text-[11px] font-bold uppercase tracking-wider">iPhone / iPad 가이드</p>
+                                        <div className="space-y-3">
+                                            {[
+                                                { icon: <Share size={12} className="text-blue-400" />, text: "하단의 '공유' 버튼을 탭하세요" },
+                                                { icon: <Plus size={12} className="text-blue-400" />, text: "'홈 화면에 추가'를 탭하세요" },
+                                                { icon: <CheckCircle2 size={12} className="text-blue-400" />, text: "우측 상단 '추가'를 누르면 완료됩니다" }
+                                            ].map((step, i) => (
+                                                <div key={i} className="flex items-center gap-3 text-slate-300 text-xs">
+                                                    <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center shrink-0">{step.icon}</div>
+                                                    <span>{step.text}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                ) : platform === "android" ? (
+                                    <>
+                                        <p className="text-amber-400 text-[11px] font-bold uppercase tracking-wider">Android 가이드</p>
+                                        <div className="space-y-3">
+                                            {[
+                                                { icon: <MoreVertical size={12} className="text-blue-400" />, text: "우측 상단 메뉴(⋮)를 탭하세요" },
+                                                { icon: <Download size={12} className="text-blue-400" />, text: "'앱 설치' 버튼을 탭하세요" },
+                                                { icon: <CheckCircle2 size={12} className="text-blue-400" />, text: "팝업에서 '설치'를 누르면 완료됩니다" }
+                                            ].map((step, i) => (
+                                                <div key={i} className="flex items-center gap-3 text-slate-300 text-xs">
+                                                    <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center shrink-0">{step.icon}</div>
+                                                    <span>{step.text}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className="text-amber-400 text-[11px] font-bold uppercase tracking-wider">PC 가이드</p>
+                                        <div className="space-y-3">
+                                            {[
+                                                { icon: <Download size={12} className="text-blue-400" />, text: "주소창 우측 '설치' 아이콘을 클릭하세요" },
+                                                { icon: <CheckCircle2 size={12} className="text-blue-400" />, text: "팝업에서 '설치'를 누르면 완료됩니다" }
+                                            ].map((step, i) => (
+                                                <div key={i} className="flex items-center gap-3 text-slate-300 text-xs">
+                                                    <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center shrink-0">{step.icon}</div>
+                                                    <span>{step.text}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Main CTA */}
+                            {deferredPrompt && (
+                                <button
+                                    onClick={handleInstallClick}
+                                    className="w-full h-14 bg-white text-indigo-900 rounded-2xl font-bold text-base shadow-xl hover:scale-[1.02] active:scale-98 transition-all flex items-center justify-center gap-2"
+                                >
+                                    지금 즉시 설치하기
+                                    <Sparkles size={18} className="text-amber-500 fill-amber-500" />
+                                </button>
+                            )}
+                            
+                            <p className="text-center text-slate-500 text-[10px]">
+                                성경 365는 최신 PWA 기술로 제작되었습니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
+}
     );
 }

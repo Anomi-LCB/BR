@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
 import ClientProviders from "@/components/ClientProviders";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import PWAInstallBanner from "@/components/PWAInstallBanner";
 
 const fontDisplay = Fraunces({
   subsets: ["latin"],
@@ -72,6 +73,7 @@ export default function RootLayout({
             <PWAInstallPrompt />
           </ClientProviders>
         </ThemeProvider>
+        <PWAInstallBanner />
       </body>
     </html>
   );
