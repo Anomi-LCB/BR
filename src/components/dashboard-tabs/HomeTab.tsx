@@ -63,9 +63,9 @@ export default function HomeTab({
                 "fixed inset-0 pointer-events-none transition-opacity duration-1000 z-0",
                 isFocused ? "opacity-100" : "opacity-30"
             )}>
-                <div className="absolute top-[-10%] left-[-10%] w-[70vw] h-[70vw] rounded-full bg-blue-400/20 max-w-[500px] max-h-[500px] blur-[80px] mix-blend-multiply dark:mix-blend-screen transition-all duration-[3000ms] animate-pulse" />
-                <div className="absolute top-[20%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-emerald-400/20 max-w-[400px] max-h-[400px] blur-[80px] mix-blend-multiply dark:mix-blend-screen transition-all duration-[4000ms] animate-pulse delay-75" />
-                <div className="absolute bottom-[-10%] left-[20%] w-[80vw] h-[80vw] rounded-full bg-purple-400/20 max-w-[600px] max-h-[600px] blur-[100px] mix-blend-multiply dark:mix-blend-screen transition-all duration-[5000ms] animate-pulse delay-150" />
+                <div className="absolute top-[-10%] left-[-10%] w-[70vw] h-[70vw] rounded-full bg-blue-400/20 max-w-[500px] max-h-[500px] blur-[80px] mix-blend-multiply dark:mix-blend-screen transition-all duration-[3s] animate-pulse" />
+                <div className="absolute top-[20%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-emerald-400/20 max-w-[400px] max-h-[400px] blur-[80px] mix-blend-multiply dark:mix-blend-screen transition-all duration-[4s] animate-pulse delay-75" />
+                <div className="absolute bottom-[-10%] left-[20%] w-[80vw] h-[80vw] rounded-full bg-purple-400/20 max-w-[600px] max-h-[600px] blur-[100px] mix-blend-multiply dark:mix-blend-screen transition-all duration-[5s] animate-pulse delay-150" />
             </div>
 
             <div className={cn(

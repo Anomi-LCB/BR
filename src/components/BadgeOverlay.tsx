@@ -45,7 +45,7 @@ export default function BadgeOverlay({ badge, onClose }: BadgeOverlayProps) {
             isVisible ? "bg-background/40 backdrop-blur-md opacity-100" : "bg-transparent backdrop-blur-0 opacity-0 pointer-events-none"
         )}>
             <div className={cn(
-                "relative w-full max-w-sm overflow-hidden rounded-[40px] bg-card border border-border/50 shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]",
+                "relative w-full max-w-sm overflow-hidden rounded-[40px] bg-card border border-border/50 shadow-2xl transition-all duration-700 ease-&lsqb;cubic-bezier(0.23,1,0.32,1)&rsqb;",
                 isVisible ? "scale-100 translate-y-0" : "scale-50 translate-y-32 rotate-6"
             )}>
                 {/* Decorative Elements */}
@@ -99,7 +99,7 @@ export default function BadgeOverlay({ badge, onClose }: BadgeOverlayProps) {
                             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 delay-500"
                         )}
                     >
-                        ?곴킅?ㅻ읇寃??リ린
+                        영광스럽게 닫기
                     </button>
 
                     <p className="mt-6 text-[10px] text-muted-foreground/40 font-bold uppercase tracking-[0.3em] select-none">

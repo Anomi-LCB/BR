@@ -41,7 +41,7 @@ export default function NavDock({ activeTab, onTabChange }: NavDockProps) {
 
                 {/* Sliding Pill Indicator - perfectly centered */}
                 <div
-                    className="absolute rounded-[999px] bg-primary shadow-lg transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                    className="absolute rounded-[999px] bg-primary shadow-lg transition-all duration-500 ease-&lsqb;cubic-bezier(0.34,1.56,0.64,1)&rsqb;"
                     style={{
                         top: `${PADDING}px`,
                         bottom: `${PADDING}px`,

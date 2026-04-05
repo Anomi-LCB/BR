@@ -4,7 +4,9 @@
 - [2026-04-05] GitHub Pages 하위 경로(/BR/) 배포 최적화
 - [2026-04-05] PWA 404 에러 해결 (manifest, sw.js 경로 수정)
 - [2026-04-05] 실시간 날짜 동기화 (Client-side Date Hydration)
-- [2026-04-05] GitHub Actions Node.js 24 환경 최적화
+- [2026-04-05] GitHub Actions Node.js 24 환경 최적화 및 경고 제거
+- [2026-04-05] Tailwind CSS 모호한 클래스(Arbitrary values) 빌드 경고 전수 수정
+- [2026-04-05] BadgeOverlay 내 깨진 한글 텍스트(mojibake) 복구
 
 - [2026-04-03 성경 본문 데이터화] PDF에서 성경 구절 추출 후 `public/data/bible-krv.json` 구축 완료 (오프라인 모드).
 - [2026-04-03 UI/UX 개선] Premium 아이콘 제거, 불필요한 위젯 제거, 네비게이션 도크 스크롤 숨김 로직 제거 (하단 고정).
